@@ -9,6 +9,9 @@ Xiaoran Cai³, Kai Ye¹, Xiaotian Han¹, Vipin Chaudhary¹
 [Project page](https://uservan.github.io/GoldiBench) · [Dataset](https://huggingface.co/datasets/VanWang/GoldiBench) ·
 [All run logs](https://huggingface.co/datasets/VanWang/GoldiBench-logs)
 
+<p align="center"><img src="docs/assets/teaser.png" alt="GoldiBench: agents pick the right tool but miss the amount" width="100%"></p>
+
+
 Real editing requests describe a look, not the steps to reach it, so an agent must judge **how much** of each tool the
 look takes. GoldiBench has **500 editing tasks in five professional applications** (darktable, RawTherapee, GIMP,
 Inkscape, Blender). Each task pairs a START image with a TARGET rendered from a hidden program, so the amount has an exact
@@ -63,7 +66,17 @@ gui:
   myagent: {kind: holo, port: 8011, model: Holo4-35B-A3B-FP8}
 ```
 
-Open models: `scripts/serve_vllm.sh <hf_repo_or_dir> <served_name> <port> <gpus>` (paper settings: 64k context, 8 images).
+Open models: `scripts/serve_vllm.sh <hf_repo_or_dir> <served_name> <port> <gpus> [flags]` (paper settings: 64k context,
+8 images; the per-model flags of the paper, e.g. reasoning and tool-call parsers, are in
+[docs/conditions.md](docs/conditions.md)).
+
+Closed models: the program channel takes any OpenAI-compatible endpoint (`base_url`, `model`, `api_key_env` as above);
+the agent asks for `json_schema` structured output. The paper ran Claude Opus 5.5 and GPT-6.1 through Amazon Bedrock with
+`goldibench/bench/bedrock_proxy.py` (an OpenAI-compatible proxy that also writes a per-call cost ledger; needs AWS
+credentials, `uv sync --extra closed`). On the GUI channel Claude runs OSWorld's computer-use agent (Anthropic API by
+default, `GOLDIBENCH_ANTHROPIC_PROVIDER=bedrock` for Bedrock) and GPT runs OSWorld's PromptAgent.
+Pre-release tests ([docs/smoke_results.md](docs/smoke_results.md)) covered the open-model paths; the closed-model
+clients are the ones used for the paper but were not re-run for the release.
 The paper's model names (`qwen35`, `holo4_35b`, `uitars_7b`, ...) are built in; see
 `goldibench/bench/run_agent.py` and `goldibench/gui/osworld_agents.py`.
 
