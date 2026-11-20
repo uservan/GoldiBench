@@ -356,7 +356,7 @@ footer { padding-block: 3rem 2.5rem; color: var(--muted); font-size: .85rem; }
 </div>
 
 <script>
-const BUILD = "20261120-2345";   // cache-buster: bump on every publish
+const BUILD = "20261120-2355";   // cache-buster: bump on every publish
 const PROG = [
  ["Qwen3.5-0.8B",86.6,1.4,0.1,0.88,-0.19,-0.35,"Qwen3.5"],["Qwen3.5-2B",91.9,1.2,0.2,0.93,-0.15,-0.41,"Qwen3.5"],["Qwen3.5-4B",99.1,4.6,0.6,0.99,0.10,-0.12,"Qwen3.5"],
  ["Qwen3.5-9B",99.9,5.3,0.9,1.00,0.10,-0.22,"Qwen3.5"],["Qwen3.5-27B",100.0,7.7,0.6,1.00,0.22,-0.18,"Qwen3.5"],["Qwen3.5-35B-A3B",100.0,6.3,0.9,1.00,0.18,-0.16,"Qwen3.5"],
@@ -383,7 +383,7 @@ function el(tag, attrs, text) { const e = document.createElementNS(NS, tag); for
 const GROUPS = {"Qwen3.5": "Qwen3.5, by size", open: "Other open models", gui: "GUI agents", closed: "Closed models"};
 function cliff(rows, chan) {
   const ZOOM = 40, best = [2, 3].map(i => Math.max(...rows.map(r => r[i])));
-  const bar = (v, max, cls, isBest) => `<div class="bar ${cls}"><div class="track"><div class="fill" style="width:${Math.min(100, 100 * v / max)}%"></div></div><span class="v${isBest ? " best" : ""}">${v.toFixed(1)}</span></div>`;
+  const bar = (v, max, cls, isBest) => `<div class="bar ${cls}"><span class="v${isBest ? " best" : ""}">${v.toFixed(1)}</span><div class="track"><div class="fill" style="width:${Math.min(100, 100 * v / max)}%"></div></div></div>`;
   let h = `<colgroup><col style="width:24%"><col><col><col></colgroup><thead><tr><th>Model</th><th><span class="full">L1 tools + values</span><span class="short">L1</span></th><th><span class="full">L2 tools only</span><span class="short">L2</span> <span class="scalehint">scale 0-${ZOOM}%</span></th><th><span class="full">L3 goal only</span><span class="short">L3</span> <span class="scalehint">scale 0-${ZOOM}%</span></th></tr></thead><tbody>`;
   let prev = null;
   for (const r of rows) {
