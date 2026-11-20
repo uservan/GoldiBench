@@ -82,44 +82,50 @@
  },
  {
   "app": "gimp",
-  "task": "b041",
-  "intent": "Warm the cool underwater tones and make the fish colors pop for a significantly brighter, vibrant, and lively look.",
+  "task": "b042",
+  "intent": "Brighten the scene to enhance contrast and crisp texture on the iceberg while intensifying the vivid cold blue tones and saturation of the arctic environment.",
   "tools": [
-   "color_balance",
-   "hue_saturation"
+   "color_temperature",
+   "levels",
+   "unsharp_mask"
   ],
   "program": {
-   "color_balance": {
-    "cyan_red": 0.361,
-    "yellow_blue": -0.257
+   "levels": {
+    "low_input": 0.013,
+    "high_input": 0.825,
+    "gamma": 1.112
    },
-   "hue_saturation": {
-    "saturation": 0.344
+   "color_temperature": {
+    "intended_temperature": 4762.742
+   },
+   "unsharp_mask": {
+    "radius": 1.585,
+    "amount": 2.398
    }
   },
-  "start": "gimp_b041_start.webp",
-  "target": "gimp_b041_target.webp",
+  "start": "gimp_b042_start.webp",
+  "target": "gimp_b042_target.webp",
   "results": [
    {
-    "model": "GPT-6.1",
-    "img": "gimp_b041_gpt61sol.webp",
-    "pass": true,
-    "closeness": 0.89,
-    "de": 0.98
-   },
-   {
     "model": "Claude Opus 5.5",
-    "img": "gimp_b041_opus55.webp",
+    "img": "gimp_b042_opus55.webp",
     "pass": true,
-    "closeness": 0.89,
-    "de": 1.01
+    "closeness": 0.79,
+    "de": 2.57
    },
    {
-    "model": "Qwen3.5-397B",
-    "img": "gimp_b041_qwen35.webp",
+    "model": "GPT-6.1",
+    "img": "gimp_b042_gpt61sol.webp",
     "pass": false,
-    "closeness": 0.44,
-    "de": 5.06
+    "closeness": 0.75,
+    "de": 3.11
+   },
+   {
+    "model": "Qwen3.5-9B",
+    "img": "gimp_b042_qwen35_9b.webp",
+    "pass": false,
+    "closeness": -0.69,
+    "de": 20.62
    }
   ]
  },

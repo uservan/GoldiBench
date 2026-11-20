@@ -3,30 +3,32 @@
   "file": "darktable_pass.mp4",
   "poster": "darktable_pass.jpg",
   "app": "darktable",
-  "task": "b000",
+  "task": "b016",
   "level": "L2",
   "model": "GPT-6.1",
-  "steps": 5,
+  "steps": 12,
   "pass": true,
-  "closeness": 0.91,
-  "intent": "Significantly brighten the image to enhance the metallic sheen, making the roses appear more luminous, vibrant, and higher in contrast.",
+  "closeness": 0.76,
+  "intent": "Give this forest portrait a moody, cinematic editorial look: deepen and enrich the greens and rust tones with richer colour, and draw the eye to her with softly darkened edges.",
   "tools": [
-   "exposure"
+   "colorbalancergb",
+   "vignette"
   ]
  },
  {
   "file": "darktable_fail.mp4",
   "poster": "darktable_fail.jpg",
   "app": "darktable",
-  "task": "b000",
+  "task": "b016",
   "level": "L2",
-  "model": "Claude Opus 5.5",
-  "steps": 4,
+  "model": "Holo4-35B",
+  "steps": 28,
   "pass": false,
-  "closeness": 0.5,
-  "intent": "Significantly brighten the image to enhance the metallic sheen, making the roses appear more luminous, vibrant, and higher in contrast.",
+  "closeness": -1.04,
+  "intent": "Give this forest portrait a moody, cinematic editorial look: deepen and enrich the greens and rust tones with richer colour, and draw the eye to her with softly darkened edges.",
   "tools": [
-   "exposure"
+   "colorbalancergb",
+   "vignette"
   ]
  },
  {
@@ -67,30 +69,32 @@
   "file": "gimp_pass.mp4",
   "poster": "gimp_pass.jpg",
   "app": "gimp",
-  "task": "b015",
+  "task": "b071",
   "level": "L2",
   "model": "GPT-6.1",
-  "steps": 6,
+  "steps": 9,
   "pass": true,
-  "closeness": 0.93,
-  "intent": "Give this sleeping cub portrait a tender, dreamy storybook feel: soften the whole scene into a strong gentle haze and melt distracting grass and fur detail so everything looks soft and hazy.",
+  "closeness": 0.76,
+  "intent": "Brighten the image significantly for a lively, warmer atmosphere and sharpen details heavily for a very crisp, high-contrast finish.",
   "tools": [
-   "gaussian_blur"
+   "exposure",
+   "unsharp_mask"
   ]
  },
  {
   "file": "gimp_fail.mp4",
   "poster": "gimp_fail.jpg",
   "app": "gimp",
-  "task": "b015",
+  "task": "b071",
   "level": "L2",
-  "model": "GLM-5.3-Flash",
+  "model": "GUI-Owl-1.5-32B",
   "steps": 9,
   "pass": false,
-  "closeness": 0.67,
-  "intent": "Give this sleeping cub portrait a tender, dreamy storybook feel: soften the whole scene into a strong gentle haze and melt distracting grass and fur detail so everything looks soft and hazy.",
+  "closeness": -3.84,
+  "intent": "Brighten the image significantly for a lively, warmer atmosphere and sharpen details heavily for a very crisp, high-contrast finish.",
   "tools": [
-   "gaussian_blur"
+   "exposure",
+   "unsharp_mask"
   ]
  },
  {
