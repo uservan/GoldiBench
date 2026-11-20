@@ -46,21 +46,22 @@ manuals/                           application manuals (the --manual interventio
 ## 2. GoldiBench-logs (every run, for analysis and rebuttal)
 
 ```
-README.md
-runs.csv                           one row per run: container, run, app, channel, episodes, in_paper, paper_use
-tables/episodes/<unit>.parquet     one row per episode
-tables/steps/<unit>.parquet        one row per program round / GUI step
-images/<unit>[.partNN].tar         every render / screenshot of the unit's episodes as WebP (quality 90, original
-                                   resolution); member path = original path with .webp
-raw/<unit>.tar.zst                 every non-image file of the unit (episode.json, scores.json, harness errors, logs), redacted
-raw/<unit>.images_not_saved.txt    images of the unit outside episode dirs (not converted)
-raw/<unit>.unreadable.txt          files that could not be read when the logs were built (storage locks); usually empty
-cost/calls.parquet                 closed models: one row per API call (time, model, input / output tokens, USD, stop reason)
-cost/summary.csv                   per model: calls, tokens, USD
+<channel>/<app>/<model>/<condition>/seed<k>/      channel = program | gui; app = darktable ... blender
+    episodes.parquet    one row per episode
+    steps.parquet       one row per program round / GUI step
+    images.tar          WebP renders / screenshots (member path = original path with .webp)
+    raw.tar.zst         original episode records (episode.json), redacted
+<channel>/<app>/_run/<run>/raw.tar.zst      run-level files (scores.json, run logs), under the original run name
+other/<dir>/                                 smoke tests, pilots, backups, early experiments, top-level logs
+episodes_all.parquet                         every episode in one table; episodes_paper.parquet: the paper's runs only
+runs.csv                                     one row per run: channel, app, models, condition, in_paper, paper_use, counts
+cost/calls.parquet, cost/summary.csv, cost/by_day.csv    closed-model API calls: tokens and USD
 ```
 
-A **unit** is one run directory, named `<container>__runs__<run>` (e.g. `bench_b1_gimp__runs__b1t32`,
-`bench_b1_gimp_gui__runs__b1g100_s0`), or one other directory of the research tree (`logs`, `e3`, `v5`, backups, ...).
+**condition**: `main` (Tab. main), `manual`, `tdiff` (measured TARGET−START difference), `table`, `diffimg`,
+`minimanual_visual`, `minimanual_text`, `forced`, `forced_feedback`; other names are smoke / pilot / control runs.
+**seed**: program `main` seed0 = run `b1t32`, seed1-4 = `b1t32_s1..s4`; GUI seed0-2 = `b1g100_s0..s2` (closed models: seed0).
+Download a part with `scripts/download_logs.sh --channel gui --app gimp --model gpt61gui` (see its header).
 
 **episodes** columns: unit, container, top_dir, run, app, channel (program / gui), episode_dir, task_id, level, model,
 in_paper, paper_use, kind, end (done / rounds / max steps / DONE / error ...), n_rounds or n_steps, seconds (GUI), pass,
