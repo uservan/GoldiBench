@@ -82,50 +82,45 @@
  },
  {
   "app": "gimp",
-  "task": "b042",
-  "intent": "Brighten the scene to enhance contrast and crisp texture on the iceberg while intensifying the vivid cold blue tones and saturation of the arctic environment.",
+  "task": "b081",
+  "intent": "Make the landscape colors punchier and cooler with higher contrast, darkening the overall scene and sharpening details for a crisp, vivid look.",
   "tools": [
-   "color_temperature",
-   "levels",
+   "brightness_contrast",
    "unsharp_mask"
   ],
   "program": {
-   "levels": {
-    "low_input": 0.013,
-    "high_input": 0.825,
-    "gamma": 1.112
-   },
-   "color_temperature": {
-    "intended_temperature": 4762.742
+   "brightness_contrast": {
+    "brightness": 0.065,
+    "contrast": 0.274
    },
    "unsharp_mask": {
-    "radius": 1.585,
-    "amount": 2.398
+    "radius": 1.818,
+    "amount": 1.255
    }
   },
-  "start": "gimp_b042_start.webp",
-  "target": "gimp_b042_target.webp",
+  "start": "gimp_b081_start.webp",
+  "target": "gimp_b081_target.webp",
   "results": [
    {
-    "model": "Claude Opus 5.5",
-    "img": "gimp_b042_opus55.webp",
+    "model": "Qwen3.5-27B",
+    "img": "gimp_b081_qwen35_27b.webp",
     "pass": true,
-    "closeness": 0.79,
-    "de": 2.57
+    "closeness": 0.83,
+    "de": 2.33
+   },
+   {
+    "model": "Claude Opus 5.5",
+    "img": "gimp_b081_opus55.webp",
+    "pass": false,
+    "closeness": 0.35,
+    "de": 8.94
    },
    {
     "model": "GPT-6.1",
-    "img": "gimp_b042_gpt61sol.webp",
+    "img": "gimp_b081_gpt61sol.webp",
     "pass": false,
-    "closeness": 0.75,
-    "de": 3.11
-   },
-   {
-    "model": "Qwen3.5-9B",
-    "img": "gimp_b042_qwen35_9b.webp",
-    "pass": false,
-    "closeness": -0.69,
-    "de": 20.62
+    "closeness": -0.02,
+    "de": 14.12
    }
   ]
  },

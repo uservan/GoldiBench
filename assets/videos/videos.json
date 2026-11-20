@@ -87,10 +87,10 @@
   "app": "gimp",
   "task": "b071",
   "level": "L2",
-  "model": "GUI-Owl-1.5-32B",
-  "steps": 9,
+  "model": "EvoCUA-32B",
+  "steps": 18,
   "pass": false,
-  "closeness": -3.84,
+  "closeness": -0.58,
   "intent": "Brighten the image significantly for a lively, warmer atmosphere and sharpen details heavily for a very crisp, high-contrast finish.",
   "tools": [
    "exposure",
