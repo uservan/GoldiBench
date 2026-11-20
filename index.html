@@ -110,7 +110,26 @@ figcaption { font: 500 .74rem/1.2 var(--font-data); color: var(--muted); margin-
 .tabs { display: flex; gap: .4rem; flex-wrap: wrap; margin: .4rem 0 .9rem; }
 .tabs button { font: 500 .9rem/1 var(--font-body); padding: .5rem .9rem; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--ink); cursor: pointer; }
 .tabs button[aria-selected="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
-.cliff { padding: 14px 16px 10px; overflow-x: auto; }
+.cliff { padding: 14px 18px 12px; overflow-x: auto; }
+.cliffnote { display: flex; gap: .4rem 1.6rem; flex-wrap: wrap; align-items: baseline; margin: 0 0 .9rem; font-size: .92rem; color: var(--muted); }
+.cliffnote b { font: 700 1.25rem/1 var(--font-display); color: var(--ink); }
+.cliffnote b.l2 { color: var(--gold); }
+.bars { width: 100%; min-width: 600px; border-collapse: collapse; }
+.bars th { font: 600 .72rem/1.2 var(--font-data); color: var(--muted); letter-spacing: .05em; text-transform: uppercase; text-align: left; padding: 0 8px 8px; border: 0; }
+.bars td { padding: 4px 8px; border: 0; vertical-align: middle; }
+.bars tr.grp td { font: 600 .74rem/1 var(--font-data); color: var(--muted); letter-spacing: .05em; text-transform: uppercase; padding-top: 14px; border-bottom: 1px solid var(--line); }
+.bars td.m { white-space: nowrap; font-size: .9rem; width: 13.5rem; }
+.bars tr.closed td.m { font-weight: 600; }
+.bars td.l1 { width: 8rem; }
+.l1v { font: 500 .85rem/1 var(--font-data); font-variant-numeric: tabular-nums; color: var(--muted); }
+.bar { display: flex; align-items: center; gap: 8px; }
+.bar .track { flex: 1; height: 12px; border-radius: 3px; background: color-mix(in srgb, var(--line) 55%, transparent); position: relative; overflow: hidden; }
+.bar .fill { position: absolute; inset: 0 auto 0 0; border-radius: 3px; }
+.bar .v { font: 500 .8rem/1 var(--font-data); font-variant-numeric: tabular-nums; min-width: 2.6rem; text-align: right; color: var(--ink); }
+.bar .v.best { color: var(--gold); font-weight: 700; }
+.l1 .fill { background: var(--muted); opacity: .55; } .l2 .fill { background: var(--gold); } .l3 .fill { background: var(--over); opacity: .85; }
+.scalehint { font: 400 .72rem/1 var(--font-data); color: var(--muted); }
+.bars .short { display: none; }
 .cliff svg { width: 100%; min-width: 560px; height: auto; display: block; }
 .cliff text { font-family: var(--font-body); }
 .legend { display: flex; gap: 1.2rem; flex-wrap: wrap; font-size: .85rem; color: var(--muted); margin: .4rem 0 0; }
@@ -173,6 +192,16 @@ footer { padding-block: 3rem 2.5rem; color: var(--muted); font-size: .85rem; }
   .apps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .findings { grid-template-columns: 1fr; }
   .row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 680px) {
+  .bars { min-width: 0; }
+  .bars td, .bars th { padding-left: 4px; padding-right: 4px; }
+  .bars td.m { width: auto; font-size: .76rem; white-space: normal; }
+  .bars td.l1 { width: 2.6rem; }
+  .bars th { font-size: .62rem; }
+  .scalehint { display: none; }
+  .bars .full { display: none; } .bars .short { display: inline; }
+  .bar { gap: 4px; } .bar .v { min-width: 1.9rem; font-size: .72rem; }
 }
 @media (prefers-reduced-motion: no-preference) { .pair img { transition: opacity .15s ease; } }
 </style>
@@ -266,8 +295,9 @@ footer { padding-block: 3rem 2.5rem; color: var(--muted); font-size: .85rem; }
     <button role="tab" id="tab-prog" aria-selected="true">Writing programs</button>
     <button role="tab" id="tab-gui" aria-selected="false">Operating the GUI</button>
   </div>
-  <div class="cliff card"><svg id="cliff" role="img" aria-label="Pass rate at L1, L2 and L3 per model"></svg>
-    <div class="legend"><span><i style="background:var(--muted)"></i>L1 tools + values</span><span><i style="background:var(--gold)"></i>L2 tools only</span><span><i style="background:var(--over)"></i>L3 goal only</span></div>
+  <div class="cliff card">
+    <div class="cliffnote" id="cliffnote"></div>
+    <table class="bars" id="cliff" aria-label="Pass rate per level and model"></table>
   </div>
   <details class="full card" style="padding:0 1rem"><summary>Full table with closeness</summary>
     <div class="tablewrap" style="padding-bottom:1rem"><table id="tbl"></table></div></details>
@@ -320,7 +350,7 @@ footer { padding-block: 3rem 2.5rem; color: var(--muted); font-size: .85rem; }
 </div>
 
 <script>
-const BUILD = "20261120-2255";   // cache-buster: bump on every publish
+const BUILD = "20261120-2310";   // cache-buster: bump on every publish
 const PROG = [
  ["Qwen3.5-0.8B",86.6,1.4,0.1,0.88,-0.19,-0.35,"Qwen3.5"],["Qwen3.5-2B",91.9,1.2,0.2,0.93,-0.15,-0.41,"Qwen3.5"],["Qwen3.5-4B",99.1,4.6,0.6,0.99,0.10,-0.12,"Qwen3.5"],
  ["Qwen3.5-9B",99.9,5.3,0.9,1.00,0.10,-0.22,"Qwen3.5"],["Qwen3.5-27B",100.0,7.7,0.6,1.00,0.22,-0.18,"Qwen3.5"],["Qwen3.5-35B-A3B",100.0,6.3,0.9,1.00,0.18,-0.16,"Qwen3.5"],
@@ -343,27 +373,23 @@ const fmt = (v, d) => (v < 0 ? "−" : "") + Math.abs(v).toFixed(d);
 const NS = "http://www.w3.org/2000/svg";
 function el(tag, attrs, text) { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (text != null) e.textContent = text; return e; }
 
-// 5: cliff chart (one row per model: L1, L2, L3 on a 0-100 axis)
-function cliff(rows) {
-  const svg = document.getElementById("cliff"); svg.innerHTML = "";
-  const rowH = 22, top = 26, left = 168, right = 24, W = 760, H = top + rows.length * rowH + 14;
-  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
-  const x = v => left + (W - left - right) * v / 100;
-  for (const t of [0, 25, 50, 75, 100]) {
-    svg.append(el("line", { x1: x(t), x2: x(t), y1: top - 8, y2: H - 10, stroke: css("--line"), "stroke-width": 1 }));
-    svg.append(el("text", { x: x(t), y: 14, "text-anchor": "middle", "font-size": 11, fill: css("--muted") }, t + "%"));
-  }
+// 5: bar table (L1 on 0-100; L2 and L3 on a zoomed 0-40 scale, the scale where the differences are)
+const GROUPS = {"Qwen3.5": "Qwen3.5, by size", open: "Other open models", gui: "GUI agents", closed: "Closed models"};
+function cliff(rows, chan) {
+  const ZOOM = 40, best = [2, 3].map(i => Math.max(...rows.map(r => r[i])));
+  const bar = (v, max, cls, isBest) => `<div class="bar ${cls}"><div class="track"><div class="fill" style="width:${Math.min(100, 100 * v / max)}%"></div></div><span class="v${isBest ? " best" : ""}">${v.toFixed(1)}</span></div>`;
+  let h = `<thead><tr><th>Model</th><th><span class="full">L1 tools + values (%)</span><span class="short">L1</span></th><th><span class="full">L2 tools only</span><span class="short">L2</span> <span class="scalehint">bar scale 0-${ZOOM}%</span></th><th><span class="full">L3 goal only</span><span class="short">L3</span> <span class="scalehint">bar scale 0-${ZOOM}%</span></th></tr></thead><tbody>`;
   let prev = null;
-  rows.forEach((r, i) => {
-    const y = top + i * rowH + rowH / 2;
-    if (prev && prev !== r[7]) svg.append(el("line", { x1: 8, x2: W - 8, y1: y - rowH / 2, y2: y - rowH / 2, stroke: css("--line"), "stroke-width": 1.5 }));
-    prev = r[7];
-    svg.append(el("text", { x: left - 10, y: y + 4, "text-anchor": "end", "font-size": 12, fill: css("--ink"), "font-weight": r[7] === "closed" ? 600 : 400 }, r[0]));
-    svg.append(el("line", { x1: x(r[2]), x2: x(r[1]), y1: y, y2: y, stroke: css("--line"), "stroke-width": 3, "stroke-linecap": "round" }));
-    svg.append(el("circle", { cx: x(r[3]), cy: y, r: 4, fill: css("--over") }));
-    svg.append(el("circle", { cx: x(r[2]), cy: y, r: 5, fill: css("--gold") }));
-    svg.append(el("circle", { cx: x(r[1]), cy: y, r: 5, fill: css("--muted") }));
-  });
+  for (const r of rows) {
+    if (r[7] !== prev) { h += `<tr class="grp"><td colspan="4">${GROUPS[r[7]] || ""}</td></tr>`; prev = r[7]; }
+    h += `<tr class="${r[7] === "closed" ? "closed" : ""}"><td class="m">${r[0]}</td><td class="l1"><span class="l1v">${r[1].toFixed(1)}</span></td>` +
+         `<td class="l2">${bar(r[2], ZOOM, "l2", r[2] === best[0])}</td><td class="l3">${bar(r[3], ZOOM, "l3", r[3] === best[1])}</td></tr>`;
+  }
+  document.getElementById("cliff").innerHTML = h + "</tbody>";
+  const l1 = rows.filter(r => r[7] === "closed" || r[1] >= 50).map(r => r[1]), l1min = Math.min(...l1);
+  document.getElementById("cliffnote").innerHTML = chan === "prog"
+    ? `<span>L1, tools and values: <b>${Math.min(...rows.filter(r => !r[0].match(/0\.8B|2B/)).map(r => r[1])).toFixed(0)}–100%</b> from 4B up</span><span>L2, tools only: best <b class="l2">${best[0].toFixed(1)}%</b></span><span>L3, goal only: best <b>${best[1].toFixed(1)}%</b></span>`
+    : `<span>L1, tools and values: up to <b>${Math.max(...rows.map(r => r[1])).toFixed(1)}%</b></span><span>L2, tools only: best <b class="l2">${best[0].toFixed(1)}%</b></span><span>L3, goal only: best <b>${best[1].toFixed(1)}%</b></span>`;
 }
 function table(rows) {
   const best = [1,2,3,4,5,6].map(i => Math.max(...rows.map(r => r[i])));
@@ -374,7 +400,7 @@ function table(rows) {
 function tab(w) {
   document.getElementById("tab-prog").setAttribute("aria-selected", w === "prog");
   document.getElementById("tab-gui").setAttribute("aria-selected", w === "gui");
-  const rows = w === "prog" ? PROG : GUI; cliff(rows); table(rows);
+  const rows = w === "prog" ? PROG : GUI; cliff(rows, w); table(rows);
 }
 document.getElementById("tab-prog").onclick = () => tab("prog");
 document.getElementById("tab-gui").onclick = () => tab("gui");
