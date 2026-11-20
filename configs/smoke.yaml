@@ -1,0 +1,5 @@
+# Models of the smoke test (tests/smoke.sh): the servers started by tests/smoke.sh.
+program:
+  holo4_35b:
+    base_url: http://localhost:8011/v1
+    model: Holo4-35B-A3B-FP8

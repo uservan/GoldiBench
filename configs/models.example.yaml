@@ -1,0 +1,22 @@
+# Copy to configs/models.yaml (or point GOLDIBENCH_MODELS at your file) and list the models you want to run.
+# Names under `program:` are used with `--models` of goldibench/bench/run_agent.py, names under `gui:` with
+# goldibench/gui/run_gui_osworld.py. The paper's models are built in (see run_agent.py / osworld_agents.py MODELS);
+# entries here are added to them and override a built-in entry of the same name.
+
+program:
+  # any OpenAI-compatible chat endpoint that accepts images and json_schema response_format
+  holo4_35b:
+    base_url: http://localhost:8011/v1      # scripts/serve_vllm.sh Hcompany/Holo4-35B-A3B Holo4-35B-A3B-FP8 8011 0,1
+    model: Holo4-35B-A3B-FP8
+  my_api_model:
+    base_url: https://api.openai.com/v1
+    model: gpt-4o
+    api_key_env: OPENAI_API_KEY             # the key is read from this environment variable, never written here
+
+gui:
+  # kind = agent adapter in goldibench/gui/osworld_agents.py: holo, uitars, uitars15, opencua, owl15, evocua, qwen,
+  # prompt / promptlocal (OSWorld PromptAgent: screenshot -> pyautogui), claude (Anthropic computer use)
+  holo4_35b_gui:
+    kind: holo
+    port: 8011                              # local vLLM server, see scripts/serve_vllm.sh
+    model: Holo4-35B-A3B-FP8
