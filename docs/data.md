@@ -72,6 +72,19 @@ error), program (JSON), rationale (the model's stated reason, <= 400 chars as lo
 (manual calls), retries (failed attempts, finish reasons), error, detail, response (GUI: the model's reply, last 3000
 chars as logged), actions (GUI: executed code), errors, image (path of the screenshot / render inside images/*.tar).
 
+### Which screenshots are included
+
+The GUI runs produced about 10 million screenshots (one per step, 1920x1080, ~5 TB). Included as WebP:
+- **program channel:** every round render of every episode;
+- **GUI channel, full trajectory (every step):** all episodes of the closed models (Claude Opus 5.5, GPT-6.1), every
+  passing episode, and every episode on 5 fixed sample tasks per application (`md5(task_id) % 20 == 0`, all models,
+  levels and runs) for side-by-side comparison;
+- **GUI channel, all other episodes:** the last screenshot (the agent's final state).
+
+`episodes.full_trajectory_saved` says which case an episode is; `steps.image` is the saved WebP (null when not saved) and
+`steps.screenshot_original` the original file name. The text of every step (model reply, actions, errors) is included for
+every episode. Inside the GUI `work/` directories only small text state is kept (XMP / PP3 sidecars, configs, logs).
+
 What the harness logged (nothing else exists): program channel = the parsed program + rationale of every round (not the
 raw completion); GUI channel = the last 3000 characters of every reply + the executed actions + a screenshot per step;
 closed models = tokens and USD per call (`cost/`); open models = no token counts.
