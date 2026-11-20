@@ -13,7 +13,7 @@ GUI_MODEL=${GUI_MODEL:-holo4_35b}
 SMOKE_DIR=${SMOKE_DIR:-$(mktemp -d /tmp/goldibench_smoke.XXXX)}; mkdir -p "$SMOKE_DIR"
 PY=${PYTHON:-python3}
 export GOLDIBENCH_MODELS=${GOLDIBENCH_MODELS:-$REPO/configs/smoke.yaml}
-APPS=${APPS:-"darktable rawtherapee gimp inkscape blender"}
+APPS=${APPS-"darktable rawtherapee gimp inkscape blender"}   # APPS="" = GUI channel only
 
 # scratch data dir: everything links to the dataset, only runs/ is real
 for d in sources assets manuals minimanual; do [ -e "$SRC/$d" ] && ln -sfn "$SRC/$d" "$SMOKE_DIR/$d"; done

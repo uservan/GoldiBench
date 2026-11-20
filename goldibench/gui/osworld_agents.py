@@ -414,6 +414,7 @@ def claude_agent(model,max_steps):
             r=orig(client,_agent=_agent,**kw);u=r.usage
             inp=u.input_tokens+(getattr(u,'cache_read_input_tokens',0) or 0)+(getattr(u,'cache_creation_input_tokens',0) or 0)
             usd=inp*CLAUDE_PRICE[0]/1e6+u.output_tokens*CLAUDE_PRICE[1]/1e6
+            _ledger().parent.mkdir(parents=True,exist_ok=True)   # a fresh data dir has no logs/ yet
             with _claude_lock,_ledger().open('a') as f:
                 f.write(json.dumps({'t':time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime()),'model':'opus55gui','input_tokens':inp,
                                     'output_tokens':u.output_tokens,'usd':round(usd,6),'price_assumed':False,'stop':r.stop_reason})+'\n')

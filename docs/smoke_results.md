@@ -39,3 +39,25 @@ Inkscape (0.00), RawTherapee (0.00), Blender (pass, 0.78); no harness errors on 
 
 `scripts/restore_runs.sh` + `goldibench/paper/main_tables.py`: the program-channel table regenerated from the logs dataset
 is identical to the paper's (42 of 42 entries).
+
+## Every GUI agent adapter and the closed models (2026-11-20)
+
+GUI channel, darktable task b000 L1, 15 steps, clean-room install (`uv sync --extra gui`), weights at the paper's revisions:
+
+| agent (adapter) | served with | result |
+|---|---|---|
+| Claude Opus 5.5 (OSWorld computer use, Bedrock) | `GOLDIBENCH_ANTHROPIC_PROVIDER=bedrock` | pass, closeness 1.00, 4 steps |
+| GPT-6.1 (OSWorld PromptAgent, Bedrock via `bedrock_proxy.py`) | `bedrock_proxy.py --port 8102` | pass, closeness 1.00, 4 steps |
+| Holo4-35B-A3B (holo) | vLLM, tool-call parser qwen3_coder | ran, see above |
+| UI-TARS-2B-SFT (uitars) | vLLM, 32k | ran 5 steps; used a tool outside the task's set (gate) |
+| UI-TARS-1.5-7B (uitars15) | vLLM, 32k | ran 15 steps, closeness 0.00 |
+| OpenCUA-7B (opencua) | `scripts/setup_opencua_env.sh` (vLLM 0.12), 32k | ran 11 steps, closeness 0.00 |
+| Qwen3.5-0.8B (qwen) | vLLM, enable_thinking false | ran 15 steps, closeness 0.00 |
+| GUI-Owl-1.5-32B (owl15) | vLLM, 32k + mm-processor size | ran 15 steps, closeness 0.00 |
+| EvoCUA-32B (evocua) | vLLM | ran 15 steps, closeness 0.00 |
+
+Every agent produced well-formed replies and executable actions (no action errors, no harness errors). Program channel
+through Bedrock: GPT-6.1 and Claude Opus 5.5 pass L1 on darktable and GIMP. Total cost of these tests: about USD 3.
+
+Fixed by these tests: GUI agent dependencies (extra `gui`), the separate OpenCUA env (`scripts/setup_opencua_env.sh`),
+the cost-ledger directory for a fresh data dir, the GUI default task sets.

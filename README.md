@@ -32,13 +32,14 @@ Linux x86_64, Python ≥ 3.12, [uv](https://docs.astral.sh/uv/). Everything inst
 
 ```bash
 git clone https://github.com/uservan/GoldiBench && cd GoldiBench
-uv sync --extra paper                       # Python deps (add --extra closed for closed-model clients)
+uv sync --extra gui --extra paper           # Python deps (--extra gui: GUI agents; --extra closed: closed-model clients)
 export VE_LOCAL=$HOME/.cache/goldibench     # where apps / tools / envs go (use a fast local disk)
 
 bash scripts/setup_darktable.sh             # darktable 5.6.2   (pinned AppImages, sha256-checked)
 bash scripts/setup_apps.sh                  # RawTherapee 5.13, GIMP 3.2.6, Inkscape 1.4.4, Blender 4.5.15
 bash scripts/setup_gui.sh                   # GUI channel only: X tools (Xvfb, xdotool, openbox) + OSWorld agents (pinned commit)
 bash scripts/setup_env.sh                   # optional: the exact vLLM env of the paper (env/vllm_env.lock.txt)
+bash scripts/setup_opencua_env.sh           # optional: OpenCUA needs its own vLLM 0.12 env
 ```
 
 ## 2. Get the data
@@ -71,8 +72,9 @@ the agent asks for `json_schema` structured output. The paper ran Claude Opus 5.
 `goldibench/bench/bedrock_proxy.py` (an OpenAI-compatible proxy that also writes a per-call cost ledger; needs AWS
 credentials, `uv sync --extra closed`). On the GUI channel Claude runs OSWorld's computer-use agent (Anthropic API by
 default, `GOLDIBENCH_ANTHROPIC_PROVIDER=bedrock` for Bedrock) and GPT runs OSWorld's PromptAgent.
-Pre-release tests ([docs/smoke_results.md](docs/smoke_results.md)) covered the open-model paths; the closed-model
-clients are the ones used for the paper but were not re-run for the release.
+Pre-release tests ([docs/smoke_results.md](docs/smoke_results.md)) ran every path of this release: both channels on
+all five applications, every GUI agent adapter (Holo, UI-TARS, UI-TARS-1.5, OpenCUA, Qwen, GUI-Owl, EvoCUA, Claude
+computer use, PromptAgent) and the closed models through Amazon Bedrock.
 The paper's model names (`qwen35`, `holo4_35b`, `uitars_7b`, ...) are built in; see
 `goldibench/bench/run_agent.py` and `goldibench/gui/osworld_agents.py`.
 

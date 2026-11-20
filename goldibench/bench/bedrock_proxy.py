@@ -55,6 +55,7 @@ def spent():   # several proxy processes may share the ledger, so it is re-read 
     _SP['off']+=end;return _SP['usd']
 
 def log(model,inp,out,extra=None):
+    LEDGER.parent.mkdir(parents=True,exist_ok=True)
     pi,po,assumed=PRICES[model];usd=inp*pi/1e6+out*po/1e6
     with LEDGER.open('a') as f:
         f.write(json.dumps({'t':time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime()),'model':model,'input_tokens':inp,'output_tokens':out,
