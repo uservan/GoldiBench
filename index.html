@@ -319,6 +319,7 @@ footer { padding-block: 3rem 2.5rem; color: var(--muted); font-size: .85rem; }
 </div>
 
 <script>
+const BUILD = "20261120-2215";   // cache-buster: bump on every publish
 const PROG = [
  ["Qwen3.5-0.8B",86.6,1.4,0.1,0.88,-0.19,-0.35,"Qwen3.5"],["Qwen3.5-2B",91.9,1.2,0.2,0.93,-0.15,-0.41,"Qwen3.5"],["Qwen3.5-4B",99.1,4.6,0.6,0.99,0.10,-0.12,"Qwen3.5"],
  ["Qwen3.5-9B",99.9,5.3,0.9,1.00,0.10,-0.22,"Qwen3.5"],["Qwen3.5-27B",100.0,7.7,0.6,1.00,0.22,-0.18,"Qwen3.5"],["Qwen3.5-35B-A3B",100.0,6.3,0.9,1.00,0.18,-0.16,"Qwen3.5"],
@@ -407,7 +408,7 @@ const s = document.getElementById("strength"); s.addEventListener("input", () =>
 
 // 4 + 7: apps and examples
 const VER = {darktable: "5.6.2 · raw photo", rawtherapee: "5.13 · raw photo", gimp: "3.2.6 · raster", inkscape: "1.4.4 · vector", blender: "4.5.15 · 3D scene"};
-fetch("assets/gallery.json").then(r => r.json()).then(G => {
+fetch("assets/gallery.json?v=" + BUILD).then(r => r.json()).then(G => {
   document.getElementById("apps").innerHTML = G.map(c => `<div class="app card"><div class="thumbs"><img src="assets/${c.start}" alt="${c.app} START" loading="lazy"><img src="assets/${c.target}" alt="${c.app} TARGET" loading="lazy"></div><div class="name">${c.app}</div><div class="ver">${VER[c.app] || ""}</div></div>`).join("");
   const tabs = document.getElementById("apptabs");
   tabs.innerHTML = G.map((c, i) => `<button role="tab" aria-selected="${i === 0}" data-i="${i}">${c.app}</button>`).join("");
@@ -425,8 +426,8 @@ fetch("assets/gallery.json").then(r => r.json()).then(G => {
   show(0);
 }).catch(() => { document.getElementById("case").innerHTML = '<p class="muted" style="margin:0">Examples could not be loaded.</p>'; });
 
-fetch("assets/videos/videos.json").then(r => { if (!r.ok) throw 0; return r.json(); }).then(V => {
-  const card = v => `<div class="video card"><video src="assets/videos/${v.file}" poster="assets/videos/${v.poster}" muted loop playsinline autoplay controls preload="metadata"></video>
+fetch("assets/videos/videos.json?v=" + BUILD).then(r => { if (!r.ok) throw 0; return r.json(); }).then(V => {
+  const card = v => `<div class="video card"><video src="assets/videos/${v.file}?v=${BUILD}" poster="assets/videos/${v.poster}?v=${BUILD}" muted loop playsinline autoplay controls preload="metadata"></video>
     <div class="vhead"><strong>${v.model}</strong><span class="s ${v.pass ? "pass" : "fail"}">${v.pass ? "pass" : "fail"} · closeness ${v.closeness.toFixed(2)} · ${v.steps} steps</span></div></div>`;
   const apps = [...new Set(V.map(v => v.app))];
   document.getElementById("videos").innerHTML = apps.map(a => {
