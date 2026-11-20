@@ -82,40 +82,44 @@
  },
  {
   "app": "gimp",
-  "task": "b080",
-  "intent": "Make the subject stand out with warmer, vibrant tones against the background, bathing the landscape in a golden, reddish light.",
+  "task": "b041",
+  "intent": "Warm the cool underwater tones and make the fish colors pop for a significantly brighter, vibrant, and lively look.",
   "tools": [
-   "color_balance"
+   "color_balance",
+   "hue_saturation"
   ],
   "program": {
    "color_balance": {
-    "cyan_red": 0.488,
-    "yellow_blue": -0.289
+    "cyan_red": 0.361,
+    "yellow_blue": -0.257
+   },
+   "hue_saturation": {
+    "saturation": 0.344
    }
   },
-  "start": "gimp_b080_start.webp",
-  "target": "gimp_b080_target.webp",
+  "start": "gimp_b041_start.webp",
+  "target": "gimp_b041_target.webp",
   "results": [
    {
     "model": "GPT-6.1",
-    "img": "gimp_b080_gpt61sol.webp",
+    "img": "gimp_b041_gpt61sol.webp",
     "pass": true,
-    "closeness": 0.91,
-    "de": 0.67
+    "closeness": 0.89,
+    "de": 0.98
    },
    {
     "model": "Claude Opus 5.5",
-    "img": "gimp_b080_opus55.webp",
+    "img": "gimp_b041_opus55.webp",
     "pass": true,
-    "closeness": 0.79,
-    "de": 1.58
+    "closeness": 0.89,
+    "de": 1.01
    },
    {
     "model": "Qwen3.5-397B",
-    "img": "gimp_b080_qwen35.webp",
+    "img": "gimp_b041_qwen35.webp",
     "pass": false,
-    "closeness": 0.25,
-    "de": 5.61
+    "closeness": 0.44,
+    "de": 5.06
    }
   ]
  },

@@ -3,30 +3,30 @@
   "file": "gimp_pass.mp4",
   "poster": "gimp_pass.jpg",
   "app": "gimp",
-  "task": "b000",
+  "task": "b015",
   "level": "L2",
   "model": "GPT-6.1",
-  "steps": 10,
+  "steps": 6,
   "pass": true,
-  "closeness": 0.84,
-  "intent": "Apply a cooler and slightly more saturated color cast to the image to create a moody, cinematic night atmosphere.",
+  "closeness": 0.93,
+  "intent": "Give this sleeping cub portrait a tender, dreamy storybook feel: soften the whole scene into a strong gentle haze and melt distracting grass and fur detail so everything looks soft and hazy.",
   "tools": [
-   "color_temperature"
+   "gaussian_blur"
   ]
  },
  {
   "file": "gimp_fail.mp4",
   "poster": "gimp_fail.jpg",
   "app": "gimp",
-  "task": "b000",
+  "task": "b015",
   "level": "L2",
-  "model": "Holo4-35B",
-  "steps": 25,
+  "model": "GLM-5.3-Flash",
+  "steps": 9,
   "pass": false,
-  "closeness": 0.48,
-  "intent": "Apply a cooler and slightly more saturated color cast to the image to create a moody, cinematic night atmosphere.",
+  "closeness": 0.67,
+  "intent": "Give this sleeping cub portrait a tender, dreamy storybook feel: soften the whole scene into a strong gentle haze and melt distracting grass and fur detail so everything looks soft and hazy.",
   "tools": [
-   "color_temperature"
+   "gaussian_blur"
   ]
  },
  {

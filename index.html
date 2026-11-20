@@ -97,6 +97,10 @@ figcaption { font: 500 .74rem/1.2 var(--font-data); color: var(--muted); margin-
 .level .tag { font: 600 .85rem/1 var(--font-data); color: var(--gold); }
 .level h3 { margin-top: .45rem; }
 .level p { font-size: .9rem; color: var(--muted); margin: 0; }
+.steps { grid-template-columns: repeat(4, minmax(0, 1fr)); margin-top: .7rem; }
+.step { padding: .95rem 1.05rem; }
+.step .tag { font: 600 .8rem/1 var(--font-data); color: var(--gold); }
+.step p { font-size: .88rem; color: var(--muted); margin: .45rem 0 0; }
 .figure { margin: 14px 0 0; padding: 10px; background: #fff; }
 .figure img { width: 100%; }
 .cap { font-size: .88rem; color: var(--muted); margin-top: .6rem; }
@@ -158,10 +162,10 @@ footer { padding-block: 3rem 2.5rem; color: var(--muted); font-size: .85rem; }
 
 @media (max-width: 860px) {
   .apps { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .findings { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .findings, .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 680px) {
-  .dial, .scale, .videos, .res, .facts, .levels { grid-template-columns: 1fr; }
+  .dial, .scale, .videos, .res, .facts, .levels, .steps { grid-template-columns: 1fr; }
   .apps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .findings { grid-template-columns: 1fr; }
   .row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -238,8 +242,13 @@ footer { padding-block: 3rem 2.5rem; color: var(--muted); font-size: .85rem; }
     <div class="level card"><div class="tag">L2</div><h3>Tools only</h3><p>START, TARGET and the tool set. How much of each tool? Measures effect judgement.</p></div>
     <div class="level card"><div class="tag">L3</div><h3>Goal only</h3><p>START and TARGET. Tool choice and effect judgement together.</p></div>
   </div>
-  <figure class="figure card"><img src="assets/fig_pipeline.webp" alt="How tasks are built and checked" width="1380" height="576" loading="lazy"></figure>
-  <p class="cap">Construction: an open model proposes a professional edit, the program is rendered and checked (oracle replay, ×0.5 / ×0.9 / ×1.1 / ×2 strength, single-tool removal), reviewed and frozen.</p>
+  <h3 style="margin-top:1.6rem">How a task is built</h3>
+  <div class="grid steps">
+    <div class="step card"><div class="tag">1 · Start asset</div><p>A photo (PSBench), an SVG drawing (Openclipart) or a 3D scene (Poly Haven).</p></div>
+    <div class="step card"><div class="tag">2 · Propose</div><p>An open model writes the look in words and proposes tools and value ranges.</p></div>
+    <div class="step card"><div class="tag">3 · Render</div><p>Values are sampled and rendered one step at a time by the application itself: that is TARGET.</p></div>
+    <div class="step card"><div class="tag">4 · Check</div><p>Replay gives TARGET exactly; ×0.5 and ×1.5 strength fail; every step is needed; two VLM judges accept the look.</p></div>
+  </div>
 </section>
 
 <!-- 5 -->
