@@ -6,298 +6,297 @@
 <title>GoldiBench</title>
 <meta name="description" content="GoldiBench: 500 editing tasks in five professional applications that test whether agents can judge how much of a tool a look takes.">
 <meta property="og:title" content="GoldiBench: Right Tools, Wrong Amount">
-<meta property="og:description" content="Agents know the tools, but neither read nor check the amount.">
+<meta property="og:description" content="Agents pick the right editing tools but cannot judge how much of them a look needs.">
 <meta property="og:image" content="assets/fig_teaser.webp">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
 <style>
-/* Layout: one reading column (~760px) with wide bands for figures and tables; a strength dial opens the page. */
+/* Layout: ONE content width (--page) for every section, text left-aligned inside it; a strength dial states the question. */
 :root {
   color-scheme: light;
-  --bg: #f5f6f8;
-  --surface: #ffffff;
-  --ink: #171a21;
-  --muted: #5b6270;
-  --line: #dde1e8;
-  --gold: #b7790a;          /* just right */
-  --gold-soft: #f6ead0;
-  --under: #2f66c9;         /* too little */
-  --over: #c8412f;          /* too much */
-  --pass: #1f8a55;
-  --fail: #b3402f;
+  --bg: #f5f6f8; --surface: #ffffff; --ink: #171a21; --muted: #5b6270; --line: #dde1e8;
+  --gold: #b7790a; --under: #2f66c9; --over: #c8412f; --pass: #1f8a55; --fail: #b3402f;
   --font-display: "Bricolage Grotesque", "Inter", system-ui, sans-serif;
   --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-data: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
-  --step-0: 1rem; --step-1: 1.2rem; --step-2: 1.55rem; --step-3: 2.1rem; --step-4: clamp(2rem, 4.6vw, 3.3rem);
-  --radius: 10px;
+  --page: 1040px; --radius: 12px;
 }
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    color-scheme: dark;
+  :root:not([data-theme="light"]) { color-scheme: dark;
     --bg: #111317; --surface: #191c22; --ink: #e9ebef; --muted: #9aa1ad; --line: #2b3039;
-    --gold: #e3aa36; --gold-soft: #3a2e14; --under: #6f9bf0; --over: #ef7a68; --pass: #4cc38a; --fail: #ef7a68;
-  }
+    --gold: #e3aa36; --under: #6f9bf0; --over: #ef7a68; --pass: #4cc38a; --fail: #ef7a68; }
 }
-:root[data-theme="dark"] {
-  color-scheme: dark;
+:root[data-theme="dark"] { color-scheme: dark;
   --bg: #111317; --surface: #191c22; --ink: #e9ebef; --muted: #9aa1ad; --line: #2b3039;
-  --gold: #e3aa36; --gold-soft: #3a2e14; --under: #6f9bf0; --over: #ef7a68; --pass: #4cc38a; --fail: #ef7a68;
-}
+  --gold: #e3aa36; --under: #6f9bf0; --over: #ef7a68; --pass: #4cc38a; --fail: #ef7a68; }
 * { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; }
-body {
-  margin: 0; background: var(--bg); color: var(--ink); font: 400 var(--step-0)/1.6 var(--font-body);
-  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
-}
-img { max-width: 100%; height: auto; display: block; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 400 1rem/1.6 var(--font-body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+img, video { max-width: 100%; height: auto; display: block; }
 a { color: inherit; text-decoration-color: var(--gold); text-underline-offset: 3px; }
-a:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; border-radius: 4px; }
-.col { max-width: 760px; margin: 0 auto; }
-.wide { max-width: 1120px; margin: 0 auto; }
-section { padding-block: 3.2rem 0; }
+a:focus-visible, button:focus-visible, input:focus-visible, summary:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; border-radius: 4px; }
+.page { max-width: var(--page); margin: 0 auto; }
+section { padding-block: 3.4rem 0; }
 h1, h2, h3 { font-family: var(--font-display); font-weight: 700; line-height: 1.15; text-wrap: balance; margin: 0; }
-h2 { font-size: var(--step-3); margin-bottom: 1rem; }
-h3 { font-size: var(--step-1); margin-bottom: .4rem; }
+h2 { font-size: clamp(1.6rem, 3vw, 2.1rem); margin-bottom: .6rem; }
+h3 { font-size: 1.1rem; margin-bottom: .3rem; }
 p { margin: 0 0 1rem; }
-.eyebrow { font: 500 .78rem/1 var(--font-data); letter-spacing: .08em; text-transform: uppercase; color: var(--gold); margin-bottom: .8rem; }
-.lead { font-size: var(--step-1); color: var(--muted); }
+.prose { max-width: 68ch; }
+.eyebrow { font: 500 .78rem/1 var(--font-data); letter-spacing: .08em; text-transform: uppercase; color: var(--gold); margin-bottom: .7rem; }
+.muted { color: var(--muted); }
 .num { font-family: var(--font-data); font-variant-numeric: tabular-nums; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); }
+.grid { display: grid; gap: 14px; }
 
-/* header */
-header { padding-block: 3.5rem 1rem; text-align: center; }
-header h1 { font-size: var(--step-4); letter-spacing: -.01em; }
-header h1 .sub { display: block; font-size: .5em; font-weight: 500; color: var(--muted); margin-top: .6rem; letter-spacing: 0; }
-.authors { margin: 1.4rem auto .4rem; max-width: 860px; font-size: 1.02rem; }
-.authors span { white-space: nowrap; }
+/* 1 header */
+header { padding-block: 3.2rem 0; }
+header h1 { font-size: clamp(2.4rem, 6vw, 3.6rem); letter-spacing: -.01em; }
+header .sub { font: 500 clamp(1.1rem, 2.4vw, 1.45rem)/1.3 var(--font-display); color: var(--muted); margin-top: .35rem; }
+header .claim { font-size: clamp(1.05rem, 2vw, 1.2rem); margin-top: 1.1rem; max-width: 60ch; }
+.authors { margin-top: 1.1rem; font-size: .95rem; }
 .authors sup, .affil sup { color: var(--gold); font-weight: 600; }
-.affil { color: var(--muted); font-size: .92rem; display: flex; gap: .4rem 1.4rem; justify-content: center; flex-wrap: wrap; }
-.links { display: flex; gap: .6rem; justify-content: center; flex-wrap: wrap; margin-top: 1.6rem; }
-.btn { display: inline-flex; align-items: center; gap: .45rem; padding: .55rem 1.05rem; border-radius: 999px; background: var(--ink); color: var(--bg);
-  text-decoration: none; font-weight: 500; font-size: .95rem; border: 1px solid var(--ink); }
+.affil { color: var(--muted); font-size: .88rem; display: flex; gap: .3rem 1.2rem; flex-wrap: wrap; margin-top: .2rem; }
+.links { display: flex; gap: .55rem; flex-wrap: wrap; margin-top: 1.4rem; }
+.btn { display: inline-flex; align-items: center; gap: .45rem; padding: .5rem 1rem; border-radius: 999px; background: var(--ink); color: var(--bg);
+  text-decoration: none; font-weight: 500; font-size: .93rem; border: 1px solid var(--ink); cursor: pointer; font-family: var(--font-body); }
 .btn.ghost { background: transparent; color: var(--ink); border-color: var(--line); }
 .btn[aria-disabled="true"] { opacity: .55; cursor: default; }
-.btn svg { width: 16px; height: 16px; fill: currentColor; }
 
-/* strength dial */
-.dial { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: clamp(16px, 3vw, 28px); margin-top: 2.2rem;
-  display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: clamp(16px, 3vw, 32px); align-items: center; }
-.dial-imgs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.dial figure { margin: 0; }
-.dial figcaption { font: 500 .75rem/1.2 var(--font-data); color: var(--muted); margin-top: .35rem; letter-spacing: .04em; text-transform: uppercase; }
-.dial img { border-radius: 6px; width: 100%; aspect-ratio: 3/2; object-fit: cover; background: var(--line); }
-.dial h2 { font-size: var(--step-2); }
-.scale { position: relative; margin: 1.2rem 0 .6rem; }
-.scale input { width: 100%; accent-color: var(--gold); }
-.ticks { display: grid; grid-template-columns: repeat(6, 1fr); font: 500 .78rem/1 var(--font-data); color: var(--muted); text-align: center; margin-top: .3rem; }
+/* 2 dial */
+.dial { margin-top: 2.2rem; padding: clamp(16px, 3vw, 28px); display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: clamp(16px, 3vw, 32px); align-items: center; }
+.pair { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.pair figure { margin: 0; }
+.pair img { border-radius: 8px; width: 100%; aspect-ratio: 3/2; object-fit: cover; background: var(--line); }
+figcaption { font: 500 .74rem/1.2 var(--font-data); color: var(--muted); margin-top: .35rem; letter-spacing: .04em; text-transform: uppercase; }
+.dial input { width: 100%; accent-color: var(--gold); margin-top: 1rem; }
+.ticks { display: grid; grid-template-columns: repeat(6, 1fr); font: 500 .76rem/1 var(--font-data); color: var(--muted); text-align: center; margin-top: .3rem; }
 .ticks span:first-child { text-align: left; } .ticks span:last-child { text-align: right; }
-.readout { display: flex; gap: .6rem 1.2rem; flex-wrap: wrap; align-items: center; margin-top: 1rem; }
-.chip { font: 600 .82rem/1 var(--font-data); padding: .45rem .7rem; border-radius: 999px; letter-spacing: .03em; }
+.readout { display: flex; gap: .5rem 1.1rem; flex-wrap: wrap; align-items: center; margin-top: .9rem; }
+.chip { font: 600 .8rem/1 var(--font-data); padding: .42rem .68rem; border-radius: 999px; letter-spacing: .03em; }
 .chip.pass { background: color-mix(in srgb, var(--pass) 16%, transparent); color: var(--pass); }
 .chip.fail { background: color-mix(in srgb, var(--fail) 16%, transparent); color: var(--fail); }
-.metric { font: 400 .9rem/1.3 var(--font-data); color: var(--muted); }
-.metric b { color: var(--ink); font-weight: 500; }
-.dial .note { font-size: .88rem; color: var(--muted); margin-top: .8rem; }
+.metric { font: 400 .88rem/1.3 var(--font-data); color: var(--muted); } .metric b { color: var(--ink); font-weight: 500; }
 
-/* key numbers */
-.facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; margin-top: 1.4rem; }
-.fact { background: var(--surface); padding: 1.1rem 1.2rem; }
-.fact .big { font: 700 var(--step-3)/1 var(--font-display); }
+/* 3 numbers */
+.facts { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.fact { padding: 1.1rem 1.2rem; }
+.fact .big { font: 700 clamp(1.8rem, 3.6vw, 2.4rem)/1 var(--font-display); }
 .fact .big.gold { color: var(--gold); } .fact .big.red { color: var(--over); }
-.fact p { margin: .45rem 0 0; font-size: .9rem; color: var(--muted); }
+.fact p { margin: .5rem 0 0; font-size: .9rem; color: var(--muted); }
 
-figure.paper { margin: 1.4rem 0 0; }
-figure.paper img { background: #fff; border-radius: 8px; border: 1px solid var(--line); padding: 6px; }
-figure.paper figcaption { font-size: .9rem; color: var(--muted); margin-top: .6rem; max-width: 760px; }
-
-/* levels */
-.levels { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 1.2rem; }
-.level { border: 1px solid var(--line); border-radius: var(--radius); padding: 1rem; background: var(--surface); }
+/* 4 benchmark */
+.apps { grid-template-columns: repeat(5, minmax(0, 1fr)); margin-top: 1.2rem; }
+.app { padding: .7rem; }
+.app .thumbs { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
+.app img { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 6px; background: var(--bg); }
+.app .name { font: 600 .82rem/1.2 var(--font-data); margin-top: .5rem; }
+.app .ver { font-size: .78rem; color: var(--muted); }
+.levels { grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 14px; }
+.level { padding: 1rem 1.1rem; }
 .level .tag { font: 600 .85rem/1 var(--font-data); color: var(--gold); }
-.level h3 { margin-top: .5rem; }
+.level h3 { margin-top: .45rem; }
 .level p { font-size: .9rem; color: var(--muted); margin: 0; }
-.apps { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1rem; }
-.apps span { font: 500 .85rem/1 var(--font-data); border: 1px solid var(--line); border-radius: 999px; padding: .4rem .75rem; background: var(--surface); }
+.figure { margin: 14px 0 0; padding: 10px; background: #fff; }
+.figure img { width: 100%; }
+.cap { font-size: .88rem; color: var(--muted); margin-top: .6rem; }
 
-/* tables */
-.tabs { display: flex; gap: .4rem; margin: 1rem 0 .8rem; flex-wrap: wrap; }
+/* 5 results */
+.tabs { display: flex; gap: .4rem; flex-wrap: wrap; margin: .4rem 0 .9rem; }
 .tabs button { font: 500 .9rem/1 var(--font-body); padding: .5rem .9rem; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--ink); cursor: pointer; }
 .tabs button[aria-selected="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
-.tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
-table { border-collapse: collapse; width: 100%; font-size: .92rem; min-width: 560px; }
-th, td { padding: .5rem .75rem; text-align: right; border-bottom: 1px solid var(--line); white-space: nowrap; }
+.cliff { padding: 14px 16px 10px; overflow-x: auto; }
+.cliff svg { width: 100%; min-width: 560px; height: auto; display: block; }
+.cliff text { font-family: var(--font-body); }
+.legend { display: flex; gap: 1.2rem; flex-wrap: wrap; font-size: .85rem; color: var(--muted); margin: .4rem 0 0; }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: .35rem; vertical-align: -1px; }
+details.full { margin-top: 12px; }
+details.full summary { cursor: pointer; font-weight: 500; padding: .6rem 0; }
+.tablewrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: .9rem; min-width: 560px; }
+th, td { padding: .45rem .7rem; text-align: right; border-bottom: 1px solid var(--line); white-space: nowrap; }
 th:first-child, td:first-child { text-align: left; }
-thead th { font: 600 .78rem/1.2 var(--font-data); color: var(--muted); letter-spacing: .04em; text-transform: uppercase; background: var(--surface); position: sticky; top: 0; }
-thead th.grp { text-align: center; border-bottom: 1px solid var(--line); }
-td.num { font-family: var(--font-data); font-variant-numeric: tabular-nums; }
-tr.fam td { border-top: 2px solid var(--line); }
-tr.closed td:first-child { font-weight: 600; }
-td .bar { display: inline-block; height: 6px; border-radius: 3px; background: var(--gold); vertical-align: middle; margin-right: .4rem; opacity: .85; }
-td.best { color: var(--gold); font-weight: 600; }
-.tnote { font-size: .85rem; color: var(--muted); margin-top: .6rem; }
+thead th { font: 600 .74rem/1.2 var(--font-data); color: var(--muted); letter-spacing: .04em; text-transform: uppercase; }
+td.num { font-family: var(--font-data); } td.best { color: var(--gold); font-weight: 600; }
 
-/* findings */
-.findings { display: grid; gap: 1.6rem; margin-top: 1rem; }
-.finding { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.4rem; align-items: center; }
-.finding img { background: #fff; border-radius: 8px; border: 1px solid var(--line); padding: 6px; }
-.finding .k { font: 700 var(--step-2)/1.1 var(--font-display); color: var(--gold); margin-bottom: .3rem; }
+/* 6 analysis */
+.findings { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.finding { padding: 1rem 1.1rem; }
+.finding .mark { font: 700 1.3rem/1 var(--font-display); }
+.finding .mark.yes { color: var(--pass); } .finding .mark.no { color: var(--fail); }
+.finding h3 { margin-top: .5rem; }
+.finding p { font-size: .9rem; color: var(--muted); margin: 0; }
+.scale { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: 20px; align-items: center; padding: 1.1rem 1.2rem; margin-top: 14px; }
+.scale svg { width: 100%; height: auto; }
 
-/* gallery */
-.gallery { display: grid; gap: 1.4rem; margin-top: 1rem; }
-.case { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 1rem; }
-.case-head { display: flex; justify-content: space-between; gap: .6rem 1rem; flex-wrap: wrap; align-items: baseline; margin-bottom: .8rem; }
-.case-head .app { font: 600 .82rem/1 var(--font-data); text-transform: uppercase; letter-spacing: .06em; color: var(--gold); }
-.case-head .tools { font: 400 .82rem/1.3 var(--font-data); color: var(--muted); }
-.case .intent { font-size: .95rem; margin-bottom: .8rem; }
+/* 7 examples */
+.apptabs { display: flex; gap: .4rem; flex-wrap: wrap; margin: .4rem 0 .9rem; }
+.case { padding: 1rem; }
+.case-head { display: flex; justify-content: space-between; gap: .5rem 1rem; flex-wrap: wrap; align-items: baseline; }
+.case-head .tag { font: 600 .8rem/1 var(--font-data); text-transform: uppercase; letter-spacing: .06em; color: var(--gold); }
+.case-head .answer { font: 400 .8rem/1.4 var(--font-data); color: var(--muted); }
+.case .intent { margin: .6rem 0 .9rem; }
 .row { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
 .row figure { margin: 0; }
 .row img { border-radius: 6px; width: 100%; aspect-ratio: 1/1; object-fit: contain; background: var(--bg); }
-.row figcaption { font-size: .78rem; margin-top: .35rem; display: flex; justify-content: space-between; gap: .3rem; flex-wrap: wrap; }
-.row figcaption .who { font-weight: 600; }
-.row .s { font: 500 .74rem/1 var(--font-data); }
-.row .s.pass { color: var(--pass); } .row .s.fail { color: var(--fail); }
+.row figcaption { text-transform: none; letter-spacing: 0; font-family: var(--font-body); font-size: .78rem; display: flex; justify-content: space-between; gap: .3rem; flex-wrap: wrap; }
+.row .who { font-weight: 600; color: var(--ink); }
+.s { font: 500 .74rem/1 var(--font-data); } .s.pass { color: var(--pass); } .s.fail { color: var(--fail); }
+.videos { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 14px; }
+.video { padding: .8rem; }
+.video video { width: 100%; border-radius: 8px; background: #000; aspect-ratio: 1280/840; }
+.video .vhead { display: flex; justify-content: space-between; gap: .5rem; align-items: baseline; margin-top: .55rem; flex-wrap: wrap; }
+.video p { font-size: .88rem; color: var(--muted); margin: .25rem 0 0; }
 
-.gui { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 1rem; align-items: start; margin-top: 1rem; }
-.gui img { border-radius: 8px; border: 1px solid var(--line); }
+/* 8 resources */
+.res { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.res a.card { display: block; padding: 1.1rem 1.2rem; text-decoration: none; transition: border-color .15s; }
+.res a.card:hover { border-color: var(--gold); }
+.res p { font-size: .9rem; color: var(--muted); margin: .35rem 0 0; }
+pre { padding: 1rem; overflow-x: auto; font: 400 .82rem/1.55 var(--font-data); margin: 0; }
+footer { padding-block: 3rem 2.5rem; color: var(--muted); font-size: .85rem; }
 
-/* bibtex */
-pre { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 1rem; overflow-x: auto; font: 400 .82rem/1.55 var(--font-data); margin: 0; }
-.copy { margin-top: .6rem; }
-footer { padding-block: 3rem 2.5rem; color: var(--muted); font-size: .85rem; text-align: center; }
-
-@media (max-width: 760px) {
-  .dial, .finding, .gui { grid-template-columns: 1fr; }
-  .facts, .levels { grid-template-columns: 1fr; }
+@media (max-width: 860px) {
+  .apps { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .findings { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 680px) {
+  .dial, .scale, .videos, .res, .facts, .levels { grid-template-columns: 1fr; }
+  .apps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .findings { grid-template-columns: 1fr; }
   .row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
-@media (prefers-reduced-motion: no-preference) {
-  .dial img { transition: opacity .18s ease; }
-}
+@media (prefers-reduced-motion: no-preference) { .pair img { transition: opacity .15s ease; } }
 </style>
 </head>
 <body>
+<div class="page">
 
-<header class="wide">
-  <h1>GoldiBench<span class="sub">Right Tools, Wrong Amount: Benchmarking Agents on Effect Judgement in Professional Editing</span></h1>
-  <p class="authors">
-    <span>Wang Yang<sup>1</sup>,</span> <span>Xinpeng Li<sup>1</sup>,</span> <span>Yanyan Zhang<sup>1</sup>,</span>
-    <span>Chaoda Song<sup>1</sup>,</span> <span>Shouren Wang<sup>1</sup>,</span> <span>Debargha Ganguly<sup>1</sup>,</span>
-    <span>Vikash Singh<sup>1</sup>,</span> <span>Chuang Ma<sup>2</sup>,</span> <span>Xiaoran Cai<sup>3</sup>,</span>
-    <span>Kai Ye<sup>1</sup>,</span> <span>Xiaotian Han<sup>1</sup>,</span> <span>Vipin Chaudhary<sup>1</sup></span>
-  </p>
+<!-- 1 -->
+<header>
+  <h1>GoldiBench</h1>
+  <div class="sub">Right Tools, Wrong Amount: Benchmarking Agents on Effect Judgement in Professional Editing</div>
+  <p class="claim">Agents pick the right editing tools, but they cannot judge <strong>how much</strong> of each tool a look needs.</p>
+  <div class="authors">Wang Yang<sup>1</sup>, Xinpeng Li<sup>1</sup>, Yanyan Zhang<sup>1</sup>, Chaoda Song<sup>1</sup>, Shouren Wang<sup>1</sup>,
+    Debargha Ganguly<sup>1</sup>, Vikash Singh<sup>1</sup>, Chuang Ma<sup>2</sup>, Xiaoran Cai<sup>3</sup>, Kai Ye<sup>1</sup>,
+    Xiaotian Han<sup>1</sup>, Vipin Chaudhary<sup>1</sup></div>
   <div class="affil"><span><sup>1</sup> Case Western Reserve University</span><span><sup>2</sup> NII</span><span><sup>3</sup> Columbia University</span></div>
   <nav class="links" aria-label="Resources">
-    <a class="btn" id="paper-link" href="#" aria-disabled="true" title="Paper link coming soon">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2h9l5 5v15H6zM14 3.5V8h4.5z"/></svg>Paper (soon)</a>
-    <a class="btn" href="https://github.com/uservan/GoldiBench">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.6 22.4c.6.1.8-.3.8-.6v-2c-3.2.7-3.9-1.4-3.9-1.4-.5-1.3-1.3-1.7-1.3-1.7-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.7 1.3 3.4 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.6 0-1.2.4-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.2 1.2a11 11 0 0 1 5.8 0c2.2-1.5 3.2-1.2 3.2-1.2.6 1.6.2 2.8.1 3.1.7.8 1.2 1.9 1.2 3.1 0 4.3-2.7 5.3-5.3 5.6.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A11.5 11.5 0 0 0 12 .5z"/></svg>Code</a>
+    <a class="btn" href="#" aria-disabled="true" title="Paper link coming soon">Paper (soon)</a>
+    <a class="btn" href="https://github.com/uservan/GoldiBench">Code</a>
     <a class="btn ghost" href="https://huggingface.co/datasets/VanWang/GoldiBench">Dataset</a>
-    <a class="btn ghost" href="https://huggingface.co/datasets/VanWang/GoldiBench-logs">All run logs</a>
+    <a class="btn ghost" href="https://huggingface.co/datasets/VanWang/GoldiBench-logs">Run logs</a>
   </nav>
+</header>
 
-  <div class="dial" id="dial">
-    <div class="dial-imgs">
-      <figure><img id="d-target" src="assets/strength_target.webp" alt="TARGET render" width="900" height="600"><figcaption>Target</figcaption></figure>
-      <figure><img id="d-result" src="assets/strength_half.webp" alt="Result at the chosen strength" width="900" height="600"><figcaption id="d-cap">Result at ×0.5</figcaption></figure>
+<!-- 2 -->
+<section aria-labelledby="q-title" style="padding-top:0">
+  <div class="dial card">
+    <div class="pair">
+      <figure><img src="assets/strength_target.webp" alt="TARGET render" width="900" height="600"><figcaption>Target</figcaption></figure>
+      <figure><img id="d-result" src="assets/strength_half.webp" alt="The same edit at the chosen strength" width="900" height="600"><figcaption id="d-cap">Edit at ×0.5</figcaption></figure>
     </div>
     <div>
-      <div class="eyebrow">The question every task asks</div>
-      <h2>How much exposure does this look take?</h2>
-      <p class="lead" style="font-size:1rem">darktable task <span class="num">b000</span>: the hidden program is <span class="num">exposure +0.943 EV</span>. Move the dial to apply the same tool at other strengths.</p>
-      <div class="scale">
-        <label for="strength" class="eyebrow" style="display:block;margin:0 0 .3rem;color:var(--muted)">Strength of the edit</label>
-        <input id="strength" type="range" min="0" max="5" step="1" value="1" aria-describedby="d-readout">
-        <div class="ticks" aria-hidden="true"><span>0</span><span>×0.5</span><span>×0.9</span><span>×1</span><span>×1.1</span><span>×2</span></div>
-      </div>
+      <div class="eyebrow">The question</div>
+      <h2 id="q-title" style="font-size:1.5rem">Same tool. How much of it?</h2>
+      <p class="muted" style="margin:0">darktable task <span class="num">b000</span>: the answer is <span class="num">exposure +0.943 EV</span>.
+        Move the dial to apply the same tool at other strengths.</p>
+      <label for="strength" class="sr" style="position:absolute;left:-9999px">Strength of the edit</label>
+      <input id="strength" type="range" min="0" max="5" step="1" value="1" aria-describedby="d-readout">
+      <div class="ticks" aria-hidden="true"><span>0</span><span>×0.5</span><span>×0.9</span><span>×1</span><span>×1.1</span><span>×2</span></div>
       <div class="readout" id="d-readout" aria-live="polite">
         <span class="chip fail" id="d-chip">FAIL</span>
         <span class="metric">ΔE to target <b class="num" id="d-de">3.32</b></span>
         <span class="metric">closeness <b class="num" id="d-cl">0.48</b></span>
       </div>
-      <p class="note">Pass = closeness ≥ 0.75 and mean CIEDE2000 ΔE ≤ 4. Half and double strength fail, ×0.9 and ×1.1 pass, on every task.</p>
+      <p class="muted" style="font-size:.86rem;margin:.8rem 0 0">Pass: closeness ≥ 0.75 and mean CIEDE2000 ΔE ≤ 4. Half and double strength fail on every task.</p>
     </div>
   </div>
-</header>
+</section>
 
-<main>
-<section class="col" id="abstract">
-  <div class="eyebrow">Abstract</div>
-  <h2>Agents know the tools, but not the amount</h2>
-  <p>Real editing requests describe a look, not the steps to reach it, so an agent that serves them must judge how much of each tool the look takes. Existing benchmarks do not measure this: their tasks either state the tools and values, or leave the amount open and are scored by VLM judges that pass more than half of half- and triple-strength results.</p>
-  <p>GoldiBench has 500 editing tasks in five professional applications, solvable by writing a program or by operating the GUI. Each task pairs a START image with a TARGET rendered from a hidden program, so the amount has an exact answer. The agent's edit is re-rendered and compared with TARGET, and the same task is posed with the tools and values, the tools only, or the goal only, which separates operation from effect judgement.</p>
-  <div class="facts">
-    <div class="fact"><div class="big num">99–100%</div><p>pass rate with programs from 4B parameters up, when the values are given (L1).</p></div>
-    <div class="fact"><div class="big num red">19% · 33%</div><p>best pass rate with programs and through the GUI when only the tools are given (L2).</p></div>
-    <div class="fact"><div class="big num gold">×2</div><p>more passes when strong models are forced to compare their result with the target over four renders.</p></div>
+<!-- 3 -->
+<section aria-labelledby="f-title">
+  <div class="eyebrow">Findings</div>
+  <h2 id="f-title">Operation is solved. Judging the amount is not.</h2>
+  <div class="grid facts" style="margin-top:1rem">
+    <div class="fact card"><div class="big num">99–100%</div><p>pass rate with programs from 4B parameters up when the tools <em>and</em> values are given (L1).</p></div>
+    <div class="fact card"><div class="big num red">19% · 33%</div><p>best pass rate with programs · through the GUI when only the tools are given (L2).</p></div>
+    <div class="fact card"><div class="big num gold">×2</div><p>pass rate of strong models when forced to compare their render with the target before answering.</p></div>
   </div>
 </section>
 
-<section class="wide">
-  <figure class="paper"><img src="assets/fig_teaser.webp" alt="Teaser figure of the paper" width="1380" height="330" loading="lazy">
-    <figcaption>Agents pick the right tool and miss the amount. Manuals barely help; the measured TARGET−START difference more than doubles the pass rate, while the same difference shown as an image does not help open models.</figcaption></figure>
-</section>
-
-<section class="col" id="benchmark">
+<!-- 4 -->
+<section aria-labelledby="b-title">
   <div class="eyebrow">Benchmark</div>
-  <h2>Five applications, three levels, one exact answer</h2>
-  <p>Every task is a hidden program <span class="num">{tool: {field: value}}</span> in the application's own parameters. Rendering it gives TARGET; the agent's final program (or GUI state) is re-rendered by the benchmark, never taken from the agent.</p>
-  <div class="apps" aria-label="Applications"><span>darktable 5.6.2</span><span>RawTherapee 5.13</span><span>GIMP 3.2.6</span><span>Inkscape 1.4.4</span><span>Blender 4.5.15</span></div>
-  <div class="levels">
-    <div class="level"><div class="tag">L1</div><h3>Tools and values</h3><p>Measures operation: can the agent apply a stated edit?</p></div>
-    <div class="level"><div class="tag">L2</div><h3>Tools only</h3><p>START, TARGET and the tool set. Measures effect judgement: how much of each tool?</p></div>
-    <div class="level"><div class="tag">L3</div><h3>Goal only</h3><p>START and TARGET. Tool choice and effect judgement together.</p></div>
+  <h2 id="b-title">500 tasks with an exact answer</h2>
+  <p class="prose">Each task pairs a START image with a TARGET rendered from a hidden program in the application's own parameters,
+    so the amount has an exact answer. The agent edits by writing a program or by operating the GUI; the benchmark re-renders
+    its edit and compares it with TARGET.</p>
+  <div class="grid apps" id="apps"></div>
+  <div class="grid levels">
+    <div class="level card"><div class="tag">L1</div><h3>Tools and values</h3><p>Can the agent apply a stated edit? Measures operation.</p></div>
+    <div class="level card"><div class="tag">L2</div><h3>Tools only</h3><p>START, TARGET and the tool set. How much of each tool? Measures effect judgement.</p></div>
+    <div class="level card"><div class="tag">L3</div><h3>Goal only</h3><p>START and TARGET. Tool choice and effect judgement together.</p></div>
   </div>
-</section>
-<section class="wide">
-  <figure class="paper"><img src="assets/fig_pipeline.webp" alt="Task construction pipeline" width="1380" height="576" loading="lazy">
-    <figcaption>Construction: an open model proposes a professional edit for a photo, scene or drawing; the program is rendered, checked (oracle replay, strength scaling, single-tool removal), reviewed and frozen.</figcaption></figure>
-  <figure class="paper"><img src="assets/fig_task_example.webp" alt="Example task" width="1380" height="300" loading="lazy"></figure>
+  <figure class="figure card"><img src="assets/fig_pipeline.webp" alt="How tasks are built and checked" width="1380" height="576" loading="lazy"></figure>
+  <p class="cap">Construction: an open model proposes a professional edit, the program is rendered and checked (oracle replay, ×0.5 / ×0.9 / ×1.1 / ×2 strength, single-tool removal), reviewed and frozen.</p>
 </section>
 
-<section class="wide" id="results">
-  <div class="col" style="margin:0">
-    <div class="eyebrow">Results</div>
-    <h2>A cliff between L1 and L2, for every model</h2>
-    <p>25 open, GUI and closed models. Pass rate (%) per level, mean over the five applications (100 tasks each). Open models: mean of 5 seeds (program) or 3 seeds (GUI).</p>
-  </div>
+<!-- 5 -->
+<section aria-labelledby="r-title">
+  <div class="eyebrow">Results</div>
+  <h2 id="r-title">A cliff between L1 and L2, for every model</h2>
+  <p class="prose muted">Pass rate per level, mean over the five applications (100 tasks each). Open models: mean of 5 seeds (program) or 3 seeds (GUI).</p>
   <div class="tabs" role="tablist" aria-label="Channel">
-    <button role="tab" id="tab-prog" aria-selected="true" aria-controls="tbl">Program channel</button>
-    <button role="tab" id="tab-gui" aria-selected="false" aria-controls="tbl">GUI channel</button>
+    <button role="tab" id="tab-prog" aria-selected="true">Writing programs</button>
+    <button role="tab" id="tab-gui" aria-selected="false">Operating the GUI</button>
   </div>
-  <div class="tablewrap"><table id="tbl" aria-live="polite"></table></div>
-  <p class="tnote">closeness = 1 − ΔE(result, TARGET) / ΔE(START, TARGET), clipped at −1; negative means the edit moved away from the target.</p>
+  <div class="cliff card"><svg id="cliff" role="img" aria-label="Pass rate at L1, L2 and L3 per model"></svg>
+    <div class="legend"><span><i style="background:var(--muted)"></i>L1 tools + values</span><span><i style="background:var(--gold)"></i>L2 tools only</span><span><i style="background:var(--over)"></i>L3 goal only</span></div>
+  </div>
+  <details class="full card" style="padding:0 1rem"><summary>Full table with closeness</summary>
+    <div class="tablewrap" style="padding-bottom:1rem"><table id="tbl"></table></div></details>
 </section>
 
-<section class="col" id="findings">
+<!-- 6 -->
+<section aria-labelledby="a-title">
   <div class="eyebrow">Analysis</div>
-  <h2>What helps, and what does not</h2>
-  <div class="findings">
-    <div class="finding"><div><div class="k">Scale does not close the gap</div><p>From 0.8B to 397B parameters, Qwen3.5 goes from 87% to 100% at L1 but stays near 10% at L2. GUI agent families show the same pattern.</p></div>
-      <img src="assets/fig_scaling_prog.webp" alt="Pass rate against model size, program channel" width="336" height="270" loading="lazy"></div>
-    <div class="finding"><div><div class="k">Agents stop after one look</div><p>Allowed four renders, agents almost always stop after the first. Forced to compare all four, the strong models double their pass rate.</p></div>
-      <img src="assets/fig_rounds.webp" alt="Distance to target after each forced round" width="666" height="320" loading="lazy"></div>
-    <div class="finding"><div><div class="k">The metric separates amounts</div><p>Closeness falls steadily as the strength moves away from ×1, so half- and double-strength edits fail while ×0.9 and ×1.1 pass.</p></div>
-      <img src="assets/fig_strength.webp" alt="Closeness against strength scaling" width="666" height="276" loading="lazy"></div>
+  <h2 id="a-title">What helps, and what does not</h2>
+  <div class="grid findings" style="margin-top:1rem">
+    <div class="finding card"><div class="mark no">✕</div><h3>The manual</h3><p>Installing the application's manual as a skill barely changes the pass rate.</p></div>
+    <div class="finding card"><div class="mark yes">✓</div><h3>Measured difference</h3><p>Giving the measured TARGET − START difference more than doubles the pass rate.</p></div>
+    <div class="finding card"><div class="mark no">✕</div><h3>Difference as an image</h3><p>The same difference shown as an image does not help open models.</p></div>
+    <div class="finding card"><div class="mark yes">✓</div><h3>Forced comparison</h3><p>Allowed four renders, agents stop after the first. Forced to compare, strong models double.</p></div>
+  </div>
+  <div class="scale card">
+    <div><h3>Scale does not close the gap</h3><p class="muted" style="margin:0">Qwen3.5 from 0.8B to 397B parameters, writing programs: L1 reaches 100% from 4B on, L2 stays near 10%.</p></div>
+    <svg id="scalechart" viewBox="0 0 520 220" role="img" aria-label="Pass rate of Qwen3.5 sizes at L1 and L2"></svg>
   </div>
 </section>
 
-<section class="wide" id="gallery">
-  <div class="col" style="margin:0">
-    <div class="eyebrow">Examples</div>
-    <h2>Same tools, different amounts</h2>
-    <p>One L2 task per application from the main run: the agents get START, TARGET and the tools, and write the values. Each result is the benchmark's re-render of the agent's final program.</p>
-  </div>
-  <div class="gallery" id="gal"><p class="tnote">Loading examples…</p></div>
-  <div class="gui" id="gui" hidden>
-    <img id="gui-gif" alt="GUI agent episode, one frame per step" loading="lazy">
-    <div><h3>Through the GUI</h3><p id="gui-text" class="tnote" style="margin:0"></p><img id="gui-target" alt="TARGET of the GUI episode" style="margin-top:.8rem" loading="lazy"></div>
-  </div>
+<!-- 7 -->
+<section aria-labelledby="e-title">
+  <div class="eyebrow">Examples</div>
+  <h2 id="e-title">Same tools, different amounts</h2>
+  <p class="prose muted">One L2 task per application from the main run. Each result is the benchmark's re-render of the agent's final program.</p>
+  <div class="apptabs" role="tablist" aria-label="Application" id="apptabs"></div>
+  <article class="case card" id="case"></article>
+  <h3 style="margin-top:1.8rem">Watch the agents operate the GUI</h3>
+  <p class="prose muted" style="margin-bottom:0">Every step is one screenshot and the model's own words for that step; the last frame shows the final state next to TARGET.</p>
+  <div class="grid videos" id="videos"></div>
 </section>
 
-<section class="col" id="cite">
-  <div class="eyebrow">Citation</div>
-  <h2>BibTeX</h2>
-<pre id="bib">@misc{yang2026goldibench,
+<!-- 8 -->
+<section aria-labelledby="res-title">
+  <div class="eyebrow">Resources</div>
+  <h2 id="res-title">Code, data and every run</h2>
+  <div class="grid res" style="margin-top:1rem">
+    <a class="card" href="https://github.com/uservan/GoldiBench"><h3>Code</h3><p>Harness for both channels, the five applications, scorers, model configs and a smoke test.</p></a>
+    <a class="card" href="https://huggingface.co/datasets/VanWang/GoldiBench"><h3>Dataset</h3><p>500 frozen tasks: START, TARGET, the hidden program, L1 / L2 / L3 instructions, GUI configs.</p></a>
+    <a class="card" href="https://huggingface.co/datasets/VanWang/GoldiBench-logs"><h3>Run logs</h3><p>Every episode of the paper: model outputs, actions, screenshots, scores, and the closed-model costs.</p></a>
+  </div>
+  <h3 style="margin-top:1.8rem">Citation</h3>
+<pre class="card" id="bib">@misc{yang2026goldibench,
   title  = {GoldiBench: Right Tools, Wrong Amount -- Benchmarking Agents on
             Effect Judgement in Professional Editing},
   author = {Yang, Wang and Li, Xinpeng and Zhang, Yanyan and Song, Chaoda and
@@ -305,98 +304,124 @@ footer { padding-block: 3rem 2.5rem; color: var(--muted); font-size: .85rem; tex
             Cai, Xiaoran and Ye, Kai and Han, Xiaotian and Chaudhary, Vipin},
   year   = {2026}
 }</pre>
-  <button class="btn ghost copy" id="copy" type="button">Copy BibTeX</button>
+  <button class="btn ghost" id="copy" type="button" style="margin-top:.6rem">Copy BibTeX</button>
 </section>
-</main>
 
-<footer class="col">Code Apache-2.0 · Data CC-BY-4.0 (source images keep their own licenses: PSBench, Poly Haven, Openclipart).</footer>
+<footer>Code Apache-2.0 · Data CC-BY-4.0 (source images keep their own licenses: PSBench, Poly Haven, Openclipart).</footer>
+</div>
 
 <script>
 const PROG = [
- ["Qwen3.5-0.8B",86.6,1.4,0.1,0.88,-0.19,-0.35,"open"],["Qwen3.5-2B",91.9,1.2,0.2,0.93,-0.15,-0.41,"open"],["Qwen3.5-4B",99.1,4.6,0.6,0.99,0.10,-0.12,"open"],
- ["Qwen3.5-9B",99.9,5.3,0.9,1.00,0.10,-0.22,"open"],["Qwen3.5-27B",100.0,7.7,0.6,1.00,0.22,-0.18,"open"],["Qwen3.5-35B-A3B",100.0,6.3,0.9,1.00,0.18,-0.16,"open"],
- ["Qwen3.5-122B-A10B",100.0,6.2,1.4,1.00,0.21,-0.05,"open"],["Qwen3.5-397B-A17B",100.0,10.5,2.2,1.00,0.29,-0.04,"open"],
- ["GLM-5.3-Flash",100.0,4.2,0.4,1.00,0.24,-0.01,"fam"],["DeepSeek-V4.1-Flash",100.0,5.4,2.6,1.00,0.23,0.01,"fam"],["Step-3.7-Flash",100.0,7.4,0.6,1.00,0.24,-0.12,"fam"],
- ["Nemotron-3.5-Super-VL",100.0,6.8,0.6,1.00,0.22,-0.04,"fam"],["Claude Opus 5.5",100.0,13.4,6.8,1.00,0.45,0.27,"closed"],["GPT-6.1",100.0,19.0,13.4,1.00,0.50,0.38,"closed"]];
+ ["Qwen3.5-0.8B",86.6,1.4,0.1,0.88,-0.19,-0.35,"Qwen3.5"],["Qwen3.5-2B",91.9,1.2,0.2,0.93,-0.15,-0.41,"Qwen3.5"],["Qwen3.5-4B",99.1,4.6,0.6,0.99,0.10,-0.12,"Qwen3.5"],
+ ["Qwen3.5-9B",99.9,5.3,0.9,1.00,0.10,-0.22,"Qwen3.5"],["Qwen3.5-27B",100.0,7.7,0.6,1.00,0.22,-0.18,"Qwen3.5"],["Qwen3.5-35B-A3B",100.0,6.3,0.9,1.00,0.18,-0.16,"Qwen3.5"],
+ ["Qwen3.5-122B-A10B",100.0,6.2,1.4,1.00,0.21,-0.05,"Qwen3.5"],["Qwen3.5-397B-A17B",100.0,10.5,2.2,1.00,0.29,-0.04,"Qwen3.5"],
+ ["GLM-5.3-Flash",100.0,4.2,0.4,1.00,0.24,-0.01,"open"],["DeepSeek-V4.1-Flash",100.0,5.4,2.6,1.00,0.23,0.01,"open"],["Step-3.7-Flash",100.0,7.4,0.6,1.00,0.24,-0.12,"open"],
+ ["Nemotron-3.5-Super-VL",100.0,6.8,0.6,1.00,0.22,-0.04,"open"],["Claude Opus 5.5",100.0,13.4,6.8,1.00,0.45,0.27,"closed"],["GPT-6.1",100.0,19.0,13.4,1.00,0.50,0.38,"closed"]];
 const GUI = [
- ["Qwen3.5-0.8B",0.4,0.0,0.0,0.01,0.00,0.00,"open"],["Qwen3.5-2B",0.6,0.0,0.0,-0.09,-0.01,-0.02,"open"],["Qwen3.5-4B",4.1,0.7,0.0,-0.02,-0.01,-0.17,"open"],
- ["Qwen3.5-9B",10.2,0.5,0.0,0.01,-0.03,-0.11,"open"],["Qwen3.5-27B",16.3,0.7,0.2,0.11,-0.05,-0.18,"open"],["Qwen3.5-35B-A3B",16.0,0.4,0.0,0.13,-0.10,-0.20,"open"],
- ["Qwen3.5-122B-A10B",15.3,0.9,0.0,0.12,-0.04,-0.13,"open"],["Qwen3.5-397B-A17B",14.2,1.0,0.1,0.12,-0.07,-0.26,"open"],
- ["GLM-5.3-Flash",60.1,4.7,1.6,0.60,0.07,-0.03,"fam"],["DeepSeek-V4.1-Flash",8.1,1.2,0.4,-0.02,-0.09,-0.07,"fam"],["Step-3.7-Flash",0.0,0.0,0.0,-0.04,-0.02,-0.02,"fam"],
- ["Nemotron-3.5-Super-VL",0.0,0.0,0.0,0.00,-0.01,-0.02,"fam"],
- ["UI-TARS-2B",0.5,0.6,0.0,-0.03,-0.03,-0.10,"fam"],["UI-TARS-7B",0.4,0.8,0.0,-0.05,-0.03,-0.08,"open"],["UI-TARS-72B",6.6,0.9,0.0,0.03,-0.04,-0.16,"open"],
- ["UI-TARS-1.5-7B",9.8,1.0,0.0,0.05,-0.05,-0.24,"open"],["OpenCUA-7B",12.4,0.4,0.0,0.03,-0.17,-0.37,"fam"],["OpenCUA-32B",14.9,0.3,0.0,0.09,-0.11,-0.40,"open"],
- ["OpenCUA-72B",16.2,0.9,0.2,0.10,-0.07,-0.19,"open"],["GUI-Owl-1.5-32B",12.3,0.7,0.0,0.08,-0.10,-0.39,"fam"],["EvoCUA-32B",17.6,0.8,0.0,0.18,-0.05,-0.14,"fam"],
- ["Holo4-35B",36.7,1.8,0.2,0.38,-0.05,-0.22,"fam"],["Holo4-27B",52.6,2.3,2.0,0.56,0.06,-0.04,"open"],
+ ["Qwen3.5-0.8B",0.4,0.0,0.0,0.01,0.00,0.00,"Qwen3.5"],["Qwen3.5-2B",0.6,0.0,0.0,-0.09,-0.01,-0.02,"Qwen3.5"],["Qwen3.5-4B",4.1,0.7,0.0,-0.02,-0.01,-0.17,"Qwen3.5"],
+ ["Qwen3.5-9B",10.2,0.5,0.0,0.01,-0.03,-0.11,"Qwen3.5"],["Qwen3.5-27B",16.3,0.7,0.2,0.11,-0.05,-0.18,"Qwen3.5"],["Qwen3.5-35B-A3B",16.0,0.4,0.0,0.13,-0.10,-0.20,"Qwen3.5"],
+ ["Qwen3.5-122B-A10B",15.3,0.9,0.0,0.12,-0.04,-0.13,"Qwen3.5"],["Qwen3.5-397B-A17B",14.2,1.0,0.1,0.12,-0.07,-0.26,"Qwen3.5"],
+ ["GLM-5.3-Flash",60.1,4.7,1.6,0.60,0.07,-0.03,"open"],["DeepSeek-V4.1-Flash",8.1,1.2,0.4,-0.02,-0.09,-0.07,"open"],["Step-3.7-Flash",0.0,0.0,0.0,-0.04,-0.02,-0.02,"open"],
+ ["Nemotron-3.5-Super-VL",0.0,0.0,0.0,0.00,-0.01,-0.02,"open"],
+ ["UI-TARS-2B",0.5,0.6,0.0,-0.03,-0.03,-0.10,"gui"],["UI-TARS-7B",0.4,0.8,0.0,-0.05,-0.03,-0.08,"gui"],["UI-TARS-72B",6.6,0.9,0.0,0.03,-0.04,-0.16,"gui"],
+ ["UI-TARS-1.5-7B",9.8,1.0,0.0,0.05,-0.05,-0.24,"gui"],["OpenCUA-7B",12.4,0.4,0.0,0.03,-0.17,-0.37,"gui"],["OpenCUA-32B",14.9,0.3,0.0,0.09,-0.11,-0.40,"gui"],
+ ["OpenCUA-72B",16.2,0.9,0.2,0.10,-0.07,-0.19,"gui"],["GUI-Owl-1.5-32B",12.3,0.7,0.0,0.08,-0.10,-0.39,"gui"],["EvoCUA-32B",17.6,0.8,0.0,0.18,-0.05,-0.14,"gui"],
+ ["Holo4-35B",36.7,1.8,0.2,0.38,-0.05,-0.22,"gui"],["Holo4-27B",52.6,2.3,2.0,0.56,0.06,-0.04,"gui"],
  ["Claude Opus 5.5",98.8,13.7,8.6,0.98,0.44,0.31,"closed"],["GPT-6.1",89.5,32.7,17.8,0.87,0.55,0.41,"closed"]];
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const fmt = (v, d) => (v < 0 ? "−" : "") + Math.abs(v).toFixed(d);
+const NS = "http://www.w3.org/2000/svg";
+function el(tag, attrs, text) { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (text != null) e.textContent = text; return e; }
 
-function fmt(v, d) { return (v < 0 ? "−" : "") + Math.abs(v).toFixed(d); }
-function render(rows) {
-  const best = [1,2,3,4,5,6].map(i => Math.max(...rows.map(r => r[i])));
-  let h = '<thead><tr><th rowspan="2" scope="col">Model</th><th class="grp" colspan="3" scope="colgroup">pass (%)</th><th class="grp" colspan="3" scope="colgroup">closeness</th></tr>' +
-          '<tr><th scope="col">L1</th><th scope="col">L2</th><th scope="col">L3</th><th scope="col">L1</th><th scope="col">L2</th><th scope="col">L3</th></tr></thead><tbody>';
-  let prevFam = null;
-  rows.forEach((r, k) => {
-    const cls = [r[7] === "closed" ? "closed" : "", (k > 0 && r[7] !== "open") ? "fam" : ""].join(" ");
-    h += `<tr class="${cls}"><td>${r[0]}</td>`;
-    for (let i = 1; i <= 6; i++) {
-      const isBest = r[i] === best[i - 1] && (i !== 1 && i !== 4);
-      const bar = i === 2 ? `<span class="bar" style="width:${Math.max(2, r[i] * 1.6)}px"></span>` : "";
-      h += `<td class="num${isBest ? " best" : ""}">${bar}${fmt(r[i], i <= 3 ? 1 : 2)}</td>`;
-    }
-    h += "</tr>";
+// 5: cliff chart (one row per model: L1, L2, L3 on a 0-100 axis)
+function cliff(rows) {
+  const svg = document.getElementById("cliff"); svg.innerHTML = "";
+  const rowH = 22, top = 26, left = 168, right = 24, W = 760, H = top + rows.length * rowH + 14;
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  const x = v => left + (W - left - right) * v / 100;
+  for (const t of [0, 25, 50, 75, 100]) {
+    svg.append(el("line", { x1: x(t), x2: x(t), y1: top - 8, y2: H - 10, stroke: css("--line"), "stroke-width": 1 }));
+    svg.append(el("text", { x: x(t), y: 14, "text-anchor": "middle", "font-size": 11, fill: css("--muted") }, t + "%"));
+  }
+  let prev = null;
+  rows.forEach((r, i) => {
+    const y = top + i * rowH + rowH / 2;
+    if (prev && prev !== r[7]) svg.append(el("line", { x1: 8, x2: W - 8, y1: y - rowH / 2, y2: y - rowH / 2, stroke: css("--line"), "stroke-width": 1.5 }));
+    prev = r[7];
+    svg.append(el("text", { x: left - 10, y: y + 4, "text-anchor": "end", "font-size": 12, fill: css("--ink"), "font-weight": r[7] === "closed" ? 600 : 400 }, r[0]));
+    svg.append(el("line", { x1: x(r[2]), x2: x(r[1]), y1: y, y2: y, stroke: css("--line"), "stroke-width": 3, "stroke-linecap": "round" }));
+    svg.append(el("circle", { cx: x(r[3]), cy: y, r: 4, fill: css("--over") }));
+    svg.append(el("circle", { cx: x(r[2]), cy: y, r: 5, fill: css("--gold") }));
+    svg.append(el("circle", { cx: x(r[1]), cy: y, r: 5, fill: css("--muted") }));
   });
+}
+function table(rows) {
+  const best = [1,2,3,4,5,6].map(i => Math.max(...rows.map(r => r[i])));
+  let h = '<thead><tr><th rowspan="2" scope="col">Model</th><th colspan="3" scope="colgroup" style="text-align:center">pass (%)</th><th colspan="3" scope="colgroup" style="text-align:center">closeness</th></tr><tr><th>L1</th><th>L2</th><th>L3</th><th>L1</th><th>L2</th><th>L3</th></tr></thead><tbody>';
+  rows.forEach(r => { h += `<tr><td>${r[0]}</td>` + [1,2,3,4,5,6].map(i => `<td class="num${r[i] === best[i-1] && i !== 1 && i !== 4 ? " best" : ""}">${fmt(r[i], i <= 3 ? 1 : 2)}</td>`).join("") + "</tr>"; });
   document.getElementById("tbl").innerHTML = h + "</tbody>";
 }
-function tab(which) {
-  document.getElementById("tab-prog").setAttribute("aria-selected", which === "prog");
-  document.getElementById("tab-gui").setAttribute("aria-selected", which === "gui");
-  render(which === "prog" ? PROG : GUI);
+function tab(w) {
+  document.getElementById("tab-prog").setAttribute("aria-selected", w === "prog");
+  document.getElementById("tab-gui").setAttribute("aria-selected", w === "gui");
+  const rows = w === "prog" ? PROG : GUI; cliff(rows); table(rows);
 }
 document.getElementById("tab-prog").onclick = () => tab("prog");
 document.getElementById("tab-gui").onclick = () => tab("gui");
 tab("prog");
 
-// strength dial
-const LV = [
-  {k:"start",l:"no edit",de:6.34,cl:0.0},{k:"half",l:"×0.5",de:3.32,cl:0.476},{k:"near_0.9",l:"×0.9",de:0.74,cl:0.883},
-  {k:"target",l:"×1",de:0.0,cl:1.0},{k:"near_1.1",l:"×1.1",de:0.74,cl:0.883},{k:"over",l:"×2",de:3.25,cl:0.488}];
-LV.forEach(v => { const i = new Image(); i.src = `assets/strength_${v.k}.webp`; });
+// 6: scale chart (Qwen3.5 program channel)
+(function () {
+  const svg = document.getElementById("scalechart"), q = PROG.filter(r => r[7] === "Qwen3.5");
+  const L = 40, R = 14, T = 12, B = 44, W = 520, H = 220, x = i => L + (W - L - R) * i / (q.length - 1), y = v => T + (H - T - B) * (1 - v / 100);
+  for (const t of [0, 50, 100]) { svg.append(el("line", { x1: L, x2: W - R, y1: y(t), y2: y(t), stroke: css("--line") })); svg.append(el("text", { x: L - 6, y: y(t) + 4, "text-anchor": "end", "font-size": 11, fill: css("--muted") }, t + "%")); }
+  for (const [k, col] of [[1, css("--muted")], [2, css("--gold")]]) {
+    svg.append(el("polyline", { points: q.map((r, i) => `${x(i)},${y(r[k])}`).join(" "), fill: "none", stroke: col, "stroke-width": 2.5 }));
+    q.forEach((r, i) => svg.append(el("circle", { cx: x(i), cy: y(r[k]), r: 3.5, fill: col })));
+  }
+  q.forEach((r, i) => svg.append(el("text", { x: x(i), y: H - 22, "text-anchor": "middle", "font-size": 10.5, fill: css("--muted") }, r[0].replace("Qwen3.5-", "").replace(/-A\d+B/, ""))));
+  svg.append(el("text", { x: W - R, y: y(100) - 2 + 14, "text-anchor": "end", "font-size": 11, fill: css("--muted") }, "L1"));
+  svg.append(el("text", { x: W - R, y: y(10.5) - 8, "text-anchor": "end", "font-size": 11, fill: css("--gold") }, "L2"));
+})();
+
+// 2: strength dial
+const LV = [{k:"start",l:"no edit",de:6.34,cl:0.0},{k:"half",l:"×0.5",de:3.32,cl:0.476},{k:"near_0.9",l:"×0.9",de:0.74,cl:0.883},
+            {k:"target",l:"×1",de:0.0,cl:1.0},{k:"near_1.1",l:"×1.1",de:0.74,cl:0.883},{k:"over",l:"×2",de:3.25,cl:0.488}];
+LV.forEach(v => { new Image().src = `assets/strength_${v.k}.webp`; });
 function dial(i) {
   const v = LV[i], pass = v.cl >= 0.75 && v.de <= 4;
   document.getElementById("d-result").src = `assets/strength_${v.k}.webp`;
-  document.getElementById("d-cap").textContent = "Result at " + v.l;
+  document.getElementById("d-cap").textContent = "Edit at " + v.l;
   const c = document.getElementById("d-chip"); c.textContent = pass ? "PASS" : "FAIL"; c.className = "chip " + (pass ? "pass" : "fail");
-  document.getElementById("d-de").textContent = v.de.toFixed(2);
-  document.getElementById("d-cl").textContent = v.cl.toFixed(2);
+  document.getElementById("d-de").textContent = v.de.toFixed(2); document.getElementById("d-cl").textContent = v.cl.toFixed(2);
 }
 const s = document.getElementById("strength"); s.addEventListener("input", () => dial(+s.value)); dial(+s.value);
 
-// gallery
+// 4 + 7: apps and examples
+const VER = {darktable: "5.6.2 · raw photo", rawtherapee: "5.13 · raw photo", gimp: "3.2.6 · raster", inkscape: "1.4.4 · vector", blender: "4.5.15 · 3D scene"};
 fetch("assets/gallery.json").then(r => r.json()).then(G => {
-  const el = document.getElementById("gal"); el.innerHTML = "";
-  G.forEach(c => {
-    const prog = Object.entries(c.program).map(([m, f]) => m + "(" + Object.entries(f).map(([k, v]) => k + "=" + (Array.isArray(v) ? v.map(x => +(+x).toFixed(2)).join("/") : +(+v).toFixed(3))).join(", ") + ")").join(" · ");
-    let h = `<article class="case"><div class="case-head"><span class="app">${c.app} · ${c.task}</span><span class="tools">answer: ${prog}</span></div>` +
-            `<p class="intent">${c.intent}</p><div class="row">` +
-            `<figure><img src="assets/${c.start}" alt="START" loading="lazy"><figcaption><span class="who">START</span></figcaption></figure>` +
-            `<figure><img src="assets/${c.target}" alt="TARGET" loading="lazy"><figcaption><span class="who">TARGET</span></figcaption></figure>`;
-    c.results.forEach(r => {
-      h += `<figure><img src="assets/${r.img}" alt="${r.model} result" loading="lazy"><figcaption><span class="who">${r.model}</span>` +
-           `<span class="s ${r.pass ? "pass" : "fail"}">${r.pass ? "pass" : "fail"} · ${r.closeness.toFixed(2)}</span></figcaption></figure>`;
-    });
-    el.insertAdjacentHTML("beforeend", h + "</div></article>");
-  });
-}).catch(() => { document.getElementById("gal").innerHTML = '<p class="tnote">Examples could not be loaded.</p>'; });
+  document.getElementById("apps").innerHTML = G.map(c => `<div class="app card"><div class="thumbs"><img src="assets/${c.start}" alt="${c.app} START" loading="lazy"><img src="assets/${c.target}" alt="${c.app} TARGET" loading="lazy"></div><div class="name">${c.app}</div><div class="ver">${VER[c.app] || ""}</div></div>`).join("");
+  const tabs = document.getElementById("apptabs");
+  tabs.innerHTML = G.map((c, i) => `<button role="tab" aria-selected="${i === 0}" data-i="${i}">${c.app}</button>`).join("");
+  tabs.classList.add("tabs");
+  const show = i => {
+    const c = G[i];
+    tabs.querySelectorAll("button").forEach(b => b.setAttribute("aria-selected", b.dataset.i == i));
+    const ans = Object.entries(c.program).map(([m, f]) => m + "(" + Object.entries(f).map(([k, v]) => k + "=" + (Array.isArray(v) ? v.map(x => +(+x).toFixed(2)).join("/") : +(+v).toFixed(3))).join(", ") + ")").join(" · ");
+    document.getElementById("case").innerHTML = `<div class="case-head"><span class="tag">${c.app} · task ${c.task} · L2</span><span class="answer">answer: ${ans}</span></div><p class="intent">${c.intent}</p><div class="row">` +
+      `<figure><img src="assets/${c.start}" alt="START"><figcaption><span class="who">START</span></figcaption></figure>` +
+      `<figure><img src="assets/${c.target}" alt="TARGET"><figcaption><span class="who">TARGET</span></figcaption></figure>` +
+      c.results.map(r => `<figure><img src="assets/${r.img}" alt="${r.model} result"><figcaption><span class="who">${r.model}</span><span class="s ${r.pass ? "pass" : "fail"}">${r.pass ? "pass" : "fail"} · ${r.closeness.toFixed(2)}</span></figcaption></figure>`).join("") + "</div>";
+  };
+  tabs.addEventListener("click", e => { if (e.target.dataset.i) show(+e.target.dataset.i); });
+  show(0);
+}).catch(() => { document.getElementById("case").innerHTML = '<p class="muted" style="margin:0">Examples could not be loaded.</p>'; });
 
-// GUI episode (optional asset)
-["gimp", "darktable", "inkscape"].reduce((p, app) => p.catch(() => fetch(`assets/gui_${app}.json`).then(r => { if (!r.ok) throw 0; return r.json(); })), Promise.reject())
-  .then(m => {
-    document.getElementById("gui-gif").src = `assets/gui_${m.app}.webp`;
-    document.getElementById("gui-target").src = `assets/${m.target}`;
-    document.getElementById("gui-text").textContent = `GPT-6.1 operating ${m.app} at L2 (tools given, values not): ${m.steps} steps, one frame per step, closeness ${(+m.closeness).toFixed(2)}. Below: TARGET.`;
-    document.getElementById("gui").hidden = false;
-  }).catch(() => {});
+fetch("assets/videos/videos.json").then(r => { if (!r.ok) throw 0; return r.json(); }).then(V => {
+  document.getElementById("videos").innerHTML = V.map(v => `<div class="video card"><video src="assets/videos/${v.file}" poster="assets/videos/${v.poster}" muted loop playsinline autoplay controls preload="metadata"></video>
+    <div class="vhead"><strong>${v.model} · ${v.app}</strong><span class="s ${v.pass ? "pass" : "fail"}">${v.pass ? "pass" : "fail"} · closeness ${v.closeness.toFixed(2)} · ${v.steps} steps</span></div>
+    <p>Task ${v.task}, ${v.level}: ${v.intent}</p></div>`).join("");
+}).catch(() => { document.getElementById("videos").innerHTML = ""; });
 
 document.getElementById("copy").onclick = async () => {
   const b = document.getElementById("copy");

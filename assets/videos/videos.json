@@ -1,0 +1,47 @@
+[
+ {
+  "file": "gimp_pass.mp4",
+  "poster": "gimp_pass.jpg",
+  "app": "gimp",
+  "task": "b000",
+  "level": "L2",
+  "model": "GPT-6.1",
+  "steps": 10,
+  "pass": true,
+  "closeness": 0.84,
+  "intent": "Apply a cooler and slightly more saturated color cast to the image to create a moody, cinematic night atmosphere.",
+  "tools": [
+   "color_temperature"
+  ]
+ },
+ {
+  "file": "gimp_fail.mp4",
+  "poster": "gimp_fail.jpg",
+  "app": "gimp",
+  "task": "b000",
+  "level": "L2",
+  "model": "Holo4-35B",
+  "steps": 25,
+  "pass": false,
+  "closeness": 0.48,
+  "intent": "Apply a cooler and slightly more saturated color cast to the image to create a moody, cinematic night atmosphere.",
+  "tools": [
+   "color_temperature"
+  ]
+ },
+ {
+  "file": "inkscape_pass.mp4",
+  "poster": "inkscape_pass.jpg",
+  "app": "inkscape",
+  "task": "b000",
+  "level": "L2",
+  "model": "Claude Opus 5.5",
+  "steps": 15,
+  "pass": true,
+  "closeness": 0.92,
+  "intent": "Please deepen the midtones to give the landscape a cooler, crisper look with more natural depth and richness.",
+  "tools": [
+   "gamma"
+  ]
+ }
+]
