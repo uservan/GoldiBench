@@ -1,5 +1,69 @@
 [
  {
+  "file": "darktable_pass.mp4",
+  "poster": "darktable_pass.jpg",
+  "app": "darktable",
+  "task": "b000",
+  "level": "L2",
+  "model": "GPT-6.1",
+  "steps": 5,
+  "pass": true,
+  "closeness": 0.91,
+  "intent": "Significantly brighten the image to enhance the metallic sheen, making the roses appear more luminous, vibrant, and higher in contrast.",
+  "tools": [
+   "exposure"
+  ]
+ },
+ {
+  "file": "darktable_fail.mp4",
+  "poster": "darktable_fail.jpg",
+  "app": "darktable",
+  "task": "b000",
+  "level": "L2",
+  "model": "Claude Opus 5.5",
+  "steps": 4,
+  "pass": false,
+  "closeness": 0.5,
+  "intent": "Significantly brighten the image to enhance the metallic sheen, making the roses appear more luminous, vibrant, and higher in contrast.",
+  "tools": [
+   "exposure"
+  ]
+ },
+ {
+  "file": "rawtherapee_pass.mp4",
+  "poster": "rawtherapee_pass.jpg",
+  "app": "rawtherapee",
+  "task": "b022",
+  "level": "L2",
+  "model": "GPT-6.1",
+  "steps": 15,
+  "pass": true,
+  "closeness": 0.86,
+  "intent": "Enhance the cool, blue atmosphere of the waterfall, sharpen the rock textures and bridge details, and draw focus to the center with a darkening of the forest edges.",
+  "tools": [
+   "sharpening",
+   "vignette",
+   "white_balance"
+  ]
+ },
+ {
+  "file": "rawtherapee_fail.mp4",
+  "poster": "rawtherapee_fail.jpg",
+  "app": "rawtherapee",
+  "task": "b022",
+  "level": "L2",
+  "model": "Claude Opus 5.5",
+  "steps": 9,
+  "pass": false,
+  "closeness": 0.42,
+  "intent": "Enhance the cool, blue atmosphere of the waterfall, sharpen the rock textures and bridge details, and draw focus to the center with a darkening of the forest edges.",
+  "tools": [
+   "sharpening",
+   "vignette",
+   "white_balance"
+  ]
+ },
+ {
   "file": "gimp_pass.mp4",
   "poster": "gimp_pass.jpg",
   "app": "gimp",
@@ -42,6 +106,51 @@
   "intent": "Please deepen the midtones to give the landscape a cooler, crisper look with more natural depth and richness.",
   "tools": [
    "gamma"
+  ]
+ },
+ {
+  "file": "inkscape_fail.mp4",
+  "poster": "inkscape_fail.jpg",
+  "app": "inkscape",
+  "task": "b000",
+  "level": "L2",
+  "model": "GLM-5.3-Flash",
+  "steps": 17,
+  "pass": false,
+  "closeness": 0.3,
+  "intent": "Please deepen the midtones to give the landscape a cooler, crisper look with more natural depth and richness.",
+  "tools": [
+   "gamma"
+  ]
+ },
+ {
+  "file": "blender_pass.mp4",
+  "poster": "blender_pass.jpg",
+  "app": "blender",
+  "task": "b000",
+  "level": "L2",
+  "model": "GPT-6.1",
+  "steps": 14,
+  "pass": true,
+  "closeness": 0.89,
+  "intent": "Enhance the atmosphere by intensifying the background light and rotating the environment, resulting in a much brighter scene with reduced contrast and saturation.",
+  "tools": [
+   "world"
+  ]
+ },
+ {
+  "file": "blender_fail.mp4",
+  "poster": "blender_fail.jpg",
+  "app": "blender",
+  "task": "b000",
+  "level": "L2",
+  "model": "Claude Opus 5.5",
+  "steps": 12,
+  "pass": false,
+  "closeness": 0.54,
+  "intent": "Enhance the atmosphere by intensifying the background light and rotating the environment, resulting in a much brighter scene with reduced contrast and saturation.",
+  "tools": [
+   "world"
   ]
  }
 ]

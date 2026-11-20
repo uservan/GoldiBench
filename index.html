@@ -146,7 +146,10 @@ td.num { font-family: var(--font-data); } td.best { color: var(--gold); font-wei
 .row figcaption { text-transform: none; letter-spacing: 0; font-family: var(--font-body); font-size: .78rem; display: flex; justify-content: space-between; gap: .3rem; flex-wrap: wrap; }
 .row .who { font-weight: 600; color: var(--ink); }
 .s { font: 500 .74rem/1 var(--font-data); } .s.pass { color: var(--pass); } .s.fail { color: var(--fail); }
-.videos { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 14px; }
+.videos { margin-top: 14px; gap: 18px; }
+.vrow { display: grid; grid-template-columns: 9rem minmax(0, 1fr) minmax(0, 1fr); gap: 14px; align-items: start; }
+.vrow .appname { font: 600 .9rem/1.3 var(--font-data); padding-top: .4rem; }
+.vrow .appname span { display: block; font: 400 .8rem/1.4 var(--font-body); color: var(--muted); margin-top: .3rem; }
 .video { padding: .8rem; }
 .video video { width: 100%; border-radius: 8px; background: #000; aspect-ratio: 1280/840; }
 .video .vhead { display: flex; justify-content: space-between; gap: .5rem; align-items: baseline; margin-top: .55rem; flex-wrap: wrap; }
@@ -165,7 +168,7 @@ footer { padding-block: 3rem 2.5rem; color: var(--muted); font-size: .85rem; }
   .findings, .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 680px) {
-  .dial, .scale, .videos, .res, .facts, .levels, .steps { grid-template-columns: 1fr; }
+  .dial, .scale, .res, .facts, .levels, .steps, .vrow { grid-template-columns: 1fr; }
   .apps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .findings { grid-template-columns: 1fr; }
   .row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -227,6 +230,8 @@ footer { padding-block: 3rem 2.5rem; color: var(--muted); font-size: .85rem; }
     <div class="fact card"><div class="big num red">19% · 33%</div><p>best pass rate with programs · through the GUI when only the tools are given (L2).</p></div>
     <div class="fact card"><div class="big num gold">×2</div><p>pass rate of strong models when forced to compare their render with the target before answering.</p></div>
   </div>
+  <figure class="figure card"><img src="assets/fig_teaser.webp" alt="Paper figure 1: a request describes the look; agents operate but miss the amount; reading the measured difference helps" width="1380" height="330" loading="lazy"></figure>
+  <p class="cap">(1) The request describes a look; GPT-6.1 picks the right tools at the wrong amounts. (2) Pass rates collapse from L1 to L2 and L3 on both channels. (3) Measuring the TARGET − START difference helps; the manual or the difference as an image does not.</p>
 </section>
 
 <!-- 4 -->
@@ -291,20 +296,14 @@ footer { padding-block: 3rem 2.5rem; color: var(--muted); font-size: .85rem; }
   <div class="apptabs" role="tablist" aria-label="Application" id="apptabs"></div>
   <article class="case card" id="case"></article>
   <h3 style="margin-top:1.8rem">Watch the agents operate the GUI</h3>
-  <p class="prose muted" style="margin-bottom:0">Every step is one screenshot and the model's own words for that step; the last frame shows the final state next to TARGET.</p>
+  <p class="prose muted" style="margin-bottom:0">One task per application: a passing episode (left) and a failing one on the same task (right). Every step is one screenshot with the model's own words for that step; the last frame shows the final state next to TARGET.</p>
   <div class="grid videos" id="videos"></div>
 </section>
 
 <!-- 8 -->
-<section aria-labelledby="res-title">
-  <div class="eyebrow">Resources</div>
-  <h2 id="res-title">Code, data and every run</h2>
-  <div class="grid res" style="margin-top:1rem">
-    <a class="card" href="https://github.com/uservan/GoldiBench"><h3>Code</h3><p>Harness for both channels, the five applications, scorers, model configs and a smoke test.</p></a>
-    <a class="card" href="https://huggingface.co/datasets/VanWang/GoldiBench"><h3>Dataset</h3><p>500 frozen tasks: START, TARGET, the hidden program, L1 / L2 / L3 instructions, GUI configs.</p></a>
-    <a class="card" href="https://huggingface.co/datasets/VanWang/GoldiBench-logs"><h3>Run logs</h3><p>Every episode of the paper: model outputs, actions, screenshots, scores, and the closed-model costs.</p></a>
-  </div>
-  <h3 style="margin-top:1.8rem">Citation</h3>
+<section aria-labelledby="cite-title">
+  <div class="eyebrow">Citation</div>
+  <h2 id="cite-title">BibTeX</h2>
 <pre class="card" id="bib">@misc{yang2026goldibench,
   title  = {GoldiBench: Right Tools, Wrong Amount -- Benchmarking Agents on
             Effect Judgement in Professional Editing},
@@ -427,9 +426,13 @@ fetch("assets/gallery.json").then(r => r.json()).then(G => {
 }).catch(() => { document.getElementById("case").innerHTML = '<p class="muted" style="margin:0">Examples could not be loaded.</p>'; });
 
 fetch("assets/videos/videos.json").then(r => { if (!r.ok) throw 0; return r.json(); }).then(V => {
-  document.getElementById("videos").innerHTML = V.map(v => `<div class="video card"><video src="assets/videos/${v.file}" poster="assets/videos/${v.poster}" muted loop playsinline autoplay controls preload="metadata"></video>
-    <div class="vhead"><strong>${v.model} · ${v.app}</strong><span class="s ${v.pass ? "pass" : "fail"}">${v.pass ? "pass" : "fail"} · closeness ${v.closeness.toFixed(2)} · ${v.steps} steps</span></div>
-    <p>Task ${v.task}, ${v.level}: ${v.intent}</p></div>`).join("");
+  const card = v => `<div class="video card"><video src="assets/videos/${v.file}" poster="assets/videos/${v.poster}" muted loop playsinline autoplay controls preload="metadata"></video>
+    <div class="vhead"><strong>${v.model}</strong><span class="s ${v.pass ? "pass" : "fail"}">${v.pass ? "pass" : "fail"} · closeness ${v.closeness.toFixed(2)} · ${v.steps} steps</span></div></div>`;
+  const apps = [...new Set(V.map(v => v.app))];
+  document.getElementById("videos").innerHTML = apps.map(a => {
+    const p = V.find(v => v.app === a && v.pass), f = V.find(v => v.app === a && !v.pass), t = p || f;
+    return `<div class="vrow"><div class="appname">${a}<span>task ${t.task} · ${t.level}<br>${t.intent}</span></div>${p ? card(p) : "<div></div>"}${f ? card(f) : "<div></div>"}</div>`;
+  }).join("");
 }).catch(() => { document.getElementById("videos").innerHTML = ""; });
 
 document.getElementById("copy").onclick = async () => {
