@@ -26,3 +26,26 @@ Other run names in the logs (`b1smoke*`, `bdk_*`, `_closed_seed1_unused`, `b1tdi
 marks every run with `in_paper` and `paper_use`. The exact shell pipelines that launched every run (including seeds and
 model groups) are kept verbatim in the raw snapshot (`VanWang/ves-raw-snapshot-20261120`, `snapshot_v2/code__visual-effect-skills.tar.zst`,
 `scripts/pipelines/`).
+
+## vLLM server flags of the paper
+
+`scripts/serve_vllm.sh <weights> <served_name> <port> <gpus> [flags]` adds `--max-model-len 65536` (override with
+`MAX_MODEL_LEN`) and `--limit-mm-per-prompt '{"image":8}'` (override with `VLLM_MM`). Extra flags per model:
+
+| served name (port in the built-in MODELS) | channel | extra flags |
+|---|---|---|
+| Qwen3.5-397B-A17B-FP8 (8001), -122B-A10B-FP8, -35B-A3B, -27B, -9B, -4B | program | `--reasoning-parser qwen3` |
+| Qwen3.5-2B, Qwen3.5-0.8B | program | none |
+| Qwen3.5 sizes as GUI agents (8041-8048) | GUI | `VLLM_MM='{"image":24}' --default-chat-template-kwargs '{"enable_thinking":false}'` |
+| GLM-5.3-Flash (8002) | both | none |
+| DeepSeek-V4.1-Flash (8003) | both | `--tokenizer-mode deepseek_v41 --reasoning-parser deepseek_v41` |
+| Step-3.7-Flash-FP8 (8004) | both | `--reasoning-parser step3p5 --trust-remote-code` |
+| NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-BF16 (8005) | both | `--reasoning-parser nemotron_v3 --trust-remote-code` |
+| Holo4-35B-A3B-FP8 (8011), Holo4-27B-FP8 (8016) | GUI (+ program smoke) | `--enable-auto-tool-choice --tool-call-parser qwen3_coder --reasoning-parser qwen3` |
+| GUI-Owl-1.5-32B-Instruct (8012) | GUI | `MAX_MODEL_LEN=32768` (+ the model card's `--mm-processor-kwargs`) |
+| EvoCUA-32B-20260105 (8013) | GUI | none |
+| OpenCUA-7B / 32B / 72B (8021 / 8022 / 8014) | GUI | `MAX_MODEL_LEN=32768 --trust-remote-code` (OpenCUA's own vLLM build) |
+| UI-TARS-2B-SFT / 7B-DPO / 72B-DPO, UI-TARS-1.5-7B (8023-8025, 8015) | GUI | `MAX_MODEL_LEN=32768` |
+
+The exact launch lines (GPU groups, memory fractions) are in the raw snapshot, `scripts/pipelines/b1_iter.sh`,
+`b1_gui*.sh`, `extra_open.sh`, `b1_more.sh`.

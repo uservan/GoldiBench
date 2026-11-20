@@ -25,7 +25,7 @@ DATA=gbpaths.DATA
 import os
 # GUI_SRC / GUI_OUT pick another program set. A frozen B-1 set (bench_b1_*) keeps its own TARGETs (copied, never re-rendered);
 # whether the GUI reproduces them is the replay check's job (validate_replay.py), whose failures a rebuild drops.
-SRC=DATA/os.environ.get('GUI_SRC','bench_pilot2');OUT=DATA/os.environ.get('GUI_OUT','bench_gui1')
+SRC=DATA/os.environ.get('GUI_SRC','bench_b1_darktable');OUT=DATA/os.environ.get('GUI_OUT','bench_b1_darktable_gui')   # the paper's sets
 FROZEN_SRC=SRC.name.startswith('bench_b1_')
 OPEN=('darktable is open in the darkroom on the photo to edit (START). ')
 

@@ -23,7 +23,7 @@ from gimp_replay import fmt
 DATA=gbpaths.DATA
 import os
 # GUI_SRC / GUI_OUT pick another program set (B-1: GUI_SRC=bench_b1_gimp GUI_OUT=bench_b1_gimp_gui); TARGETs are the set's own
-SRC=DATA/os.environ.get('GUI_SRC','bench_gimp1');OUT=DATA/os.environ.get('GUI_OUT','bench_gimp_gui1')
+SRC=DATA/os.environ.get('GUI_SRC','bench_b1_gimp');OUT=DATA/os.environ.get('GUI_OUT','bench_b1_gimp_gui')   # the paper's sets
 OPEN='GIMP is open on the photo to edit (START). '
 
 def menu(tool):return ops_gimp.OPS[tool][0]

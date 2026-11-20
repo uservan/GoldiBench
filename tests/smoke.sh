@@ -49,7 +49,10 @@ if [ "${SKIP_GUI:-0}" != 1 ]; then
     [ -f "$e" ] && $PY -c "import json,sys;e=json.load(open(sys.argv[1]));print('  ',e['id'],e['model'],e['end'],e['n_steps'],'steps pass=',e['eval'].get('pass'),'closeness=',e['eval'].get('closeness'))" "$e"
   done
 fi
-# an episode without a rendered round means the app or the model call failed, whatever the score says
-bad=$(grep -lE '"rounds": \[\]|"error": "(render failed|no valid reply)"' "$SMOKE_DIR"/bench_b1_*/runs/smoke/*/*/episode.json 2>/dev/null || true)
-[ -n "$bad" ] && { echo "episodes without a rendered round:"; echo "$bad"; fail=1; }
+# harness failures (not model failures): a render that failed, a model call that raised (server down, bad request), a
+# GUI harness error or agent exception. A model that answers badly (e.g. reasoning hits --max-tokens) is a valid result.
+bad=$( { grep -lE '"error": "render failed"|"exception":' "$SMOKE_DIR"/bench_b1_*/runs/smoke/*/*/episode.json
+         grep -lE '"response": "agent error|"end": "harness error"' "$SMOKE_DIR"/bench_b1_*_gui/runs/smoke/*/episode.json
+         ls "$SMOKE_DIR"/bench_b1_*_gui/runs/smoke/*/harness_error.json; } 2>/dev/null || true)
+[ -n "$bad" ] && { echo "harness failures in:"; echo "$bad"; fail=1; }
 [ $fail = 0 ] && echo "SMOKE OK" || { echo "SMOKE FAILED"; exit 1; }
