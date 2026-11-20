@@ -17,7 +17,7 @@ APPS=${APPS:-"darktable rawtherapee gimp inkscape blender"}
 
 # scratch data dir: everything links to the dataset, only runs/ is real
 for d in sources assets manuals minimanual; do [ -e "$SRC/$d" ] && ln -sfn "$SRC/$d" "$SMOKE_DIR/$d"; done
-for a in $APPS; do
+for a in $(echo $APPS ${GUI_APPS:-darktable} | tr " " "\n" | sort -u); do
   for s in bench_b1_$a bench_b1_${a}_gui; do
     [ -d "$SRC/$s" ] || continue; mkdir -p "$SMOKE_DIR/$s/runs"
     for f in "$SRC/$s"/*; do [ "$(basename "$f")" = runs ] || ln -sfn "$f" "$SMOKE_DIR/$s/$(basename "$f")"; done
@@ -41,12 +41,14 @@ E
 done
 
 if [ "${SKIP_GUI:-0}" != 1 ]; then
-  echo "== GUI channel: darktable"
   source "$REPO/scripts/xtools_env.sh"
-  BENCH_APP=darktable $PY "$REPO/goldibench/gui/run_gui_osworld.py" --models "$GUI_MODEL" --levels L1 --tasks b000 \
-    --run smoke --max-steps 15 --concurrency 1 || { echo "FAIL gui"; fail=1; }
-  for e in "$SMOKE_DIR"/bench_b1_darktable_gui/runs/smoke/*/episode.json; do
-    [ -f "$e" ] && $PY -c "import json,sys;e=json.load(open(sys.argv[1]));print('  ',e['id'],e['model'],e['end'],e['n_steps'],'steps pass=',e['eval'].get('pass'),'closeness=',e['eval'].get('closeness'))" "$e"
+  for ga in ${GUI_APPS:-darktable}; do
+    echo "== GUI channel: $ga"
+    BENCH_APP=$ga $PY "$REPO/goldibench/gui/run_gui_osworld.py" --models "$GUI_MODEL" --levels L1 --tasks b000 \
+      --run smoke --max-steps ${GUI_STEPS:-15} --concurrency 1 || { echo "FAIL gui $ga"; fail=1; }
+    for e in "$SMOKE_DIR"/bench_b1_${ga}_gui/runs/smoke/*/episode.json; do
+      [ -f "$e" ] && $PY -c "import json,sys;e=json.load(open(sys.argv[1]));print('  ',e['id'],e['model'],e['end'],e['n_steps'],'steps pass=',e['eval'].get('pass'),'closeness=',e['eval'].get('closeness'))" "$e"
+    done
   done
 fi
 # harness failures (not model failures): a render that failed, a model call that raised (server down, bad request), a

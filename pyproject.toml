@@ -14,6 +14,7 @@ dependencies = [
     "scikit-image>=0.25",
     "beautifulsoup4>=4.12",
     "huggingface_hub>=0.30",
+    "zstandard>=0.22",
     "opencv-python-headless>=4.10",
     # GUI channel: OSWorld's agents (cloned by scripts/setup_gui.sh) need these
     "openai>=1.60",

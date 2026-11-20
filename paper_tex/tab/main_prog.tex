@@ -1,0 +1,35 @@
+\begin{table}[t]
+  \centering
+  \caption{\textbf{Program channel.} Pass rate and mean closeness per level, mean over the five applications (each weighs the same; 100 tasks per application and level). Open models: mean of 5 seeds; closed models: one run. closeness: mean over episodes of $1-\Delta E(\text{RESULT},\text{TARGET})/\Delta E(\text{START},\text{TARGET})$, each clipped at $-1$.}
+  \label{tab:main-prog}
+  \setlength{\tabcolsep}{4pt}
+  \resizebox{\linewidth}{!}{%
+  \begin{tabular}{@{}l ccc @{\hspace{6pt}} ccc@{}}
+    \toprule
+    & \multicolumn{3}{c}{pass (\%)} & \multicolumn{3}{c}{closeness} \\
+    \cmidrule(r{6pt}){2-4}\cmidrule{5-7}
+    Model & L1 & L2 & L3 & L1 & L2 & L3 \\
+    \midrule
+    Qwen3.5-0.8B           & 86.6 & 1.4 & 0.1 & 0.88 & $-$0.19 & $-$0.35 \\
+    Qwen3.5-2B             & 91.9 & 1.2 & 0.2 & 0.93 & $-$0.15 & $-$0.41 \\
+    Qwen3.5-4B             & 99.1 & 4.6 & 0.6 & 0.99 & 0.10 & $-$0.12 \\
+    Qwen3.5-9B             & 99.9 & 5.3 & 0.9 & 1.00 & 0.10 & $-$0.22 \\
+    Qwen3.5-27B            & 100.0 & 7.7 & 0.6 & 1.00 & 0.22 & $-$0.18 \\
+    Qwen3.5-35B-A3B        & 100.0 & 6.3 & 0.9 & 1.00 & 0.18 & $-$0.16 \\
+    Qwen3.5-122B-A10B      & 100.0 & 6.2 & 1.4 & 1.00 & 0.21 & $-$0.05 \\
+    Qwen3.5-397B-A17B      & 100.0 & 10.5 & 2.2 & 1.00 & 0.29 & $-$0.04 \\
+    \midrule
+    GLM-5.3-Flash          & 100.0 & 4.2 & 0.4 & 1.00 & 0.24 & $-$0.01 \\
+    \midrule
+    DeepSeek-V4.1-Flash    & 100.0 & 5.4 & 2.6 & 1.00 & 0.23 & 0.01 \\
+    \midrule
+    Step-3.7-Flash         & 100.0 & 7.4 & 0.6 & 1.00 & 0.24 & $-$0.12 \\
+    \midrule
+    Nemotron-3.5-Super-VL  & 100.0 & 6.8 & 0.6 & 1.00 & 0.22 & $-$0.04 \\
+    \midrule
+    Claude Opus 5.5        & 100.0 & 13.4 & 6.8 & 1.00 & 0.45 & 0.27 \\
+    \midrule
+    GPT-6.1                & 100.0 & \textbf{19.0} & \textbf{13.4} & 1.00 & \textbf{0.50} & \textbf{0.38} \\
+    \bottomrule
+  \end{tabular}}
+\end{table}

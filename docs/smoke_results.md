@@ -27,3 +27,15 @@ official release URLs, sha256 recorded), `scripts/setup_gui.sh` (X tools + OSWor
 
 Issues found and fixed on the way: single-file dataset download hit Hugging Face rate limits (now tar archives),
 `tests/smoke.sh` did not create a given `SMOKE_DIR`.
+
+## Interventions and GUI channel on every app (2026-11-20, on the clean-room install)
+
+`tests/interventions.sh` (Holo4-35B-A3B, L2, one task of the intervention subset, 2 rounds) on GIMP and darktable: all
+eight condition flags run end to end: `--manual` (the model calls read_skill / load_topic), `--knowledge table_state`,
+`table_state_diff`, `diff_image`, `--minimanual visual`, `text`, `--forced`, `--forced --feedback numeric` (both rounds used).
+
+`tests/smoke.sh` GUI channel, Holo4-35B-A3B, task b000 L1, 15 steps: darktable (closeness 0.62), GIMP (pass, 1.00),
+Inkscape (0.00), RawTherapee (0.00), Blender (pass, 0.78); no harness errors on any app.
+
+`scripts/restore_runs.sh` + `goldibench/paper/main_tables.py`: the program-channel table regenerated from the logs dataset
+is identical to the paper's (42 of 42 entries).
