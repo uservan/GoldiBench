@@ -1,0 +1,213 @@
+[
+ {
+  "app": "darktable",
+  "task": "b056",
+  "intent": "Lift the deep shadows so the dark surroundings gain visible detail and tone while keeping the glowing screen and keyboard as bright focal points, giving the photo a moody but readable low-light look.",
+  "tools": [
+   "exposure",
+   "shadhi"
+  ],
+  "program": {
+   "shadhi": {
+    "shadows": 75.581
+   },
+   "exposure": {
+    "exposure": 0.975
+   }
+  },
+  "start": "darktable_b056_start.webp",
+  "target": "darktable_b056_target.webp",
+  "results": [
+   {
+    "model": "GPT-6.1",
+    "img": "darktable_b056_gpt61sol.webp",
+    "pass": true,
+    "closeness": 0.88,
+    "de": 0.8
+   },
+   {
+    "model": "Claude Opus 5.5",
+    "img": "darktable_b056_opus55.webp",
+    "pass": false,
+    "closeness": 0.62,
+    "de": 2.46
+   },
+   {
+    "model": "Qwen3.5-397B",
+    "img": "darktable_b056_qwen35.webp",
+    "pass": false,
+    "closeness": 0.49,
+    "de": 3.34
+   }
+  ]
+ },
+ {
+  "app": "rawtherapee",
+  "task": "b065",
+  "intent": "Make this alpine meadow landscape pop with crisp detail and punchy tonal contrast, like a vivid travel-poster rendition of the scene.",
+  "tools": [
+   "local_contrast"
+  ],
+  "program": {
+   "local_contrast": {
+    "amount": 0.75,
+    "radius": 103.0
+   }
+  },
+  "start": "rawtherapee_b065_start.webp",
+  "target": "rawtherapee_b065_target.webp",
+  "results": [
+   {
+    "model": "GPT-6.1",
+    "img": "rawtherapee_b065_gpt61sol.webp",
+    "pass": true,
+    "closeness": 0.97,
+    "de": 0.15
+   },
+   {
+    "model": "Claude Opus 5.5",
+    "img": "rawtherapee_b065_opus55.webp",
+    "pass": true,
+    "closeness": 0.89,
+    "de": 0.61
+   },
+   {
+    "model": "Qwen3.5-397B",
+    "img": "rawtherapee_b065_qwen35.webp",
+    "pass": false,
+    "closeness": 0.62,
+    "de": 2.01
+   }
+  ]
+ },
+ {
+  "app": "gimp",
+  "task": "b080",
+  "intent": "Make the subject stand out with warmer, vibrant tones against the background, bathing the landscape in a golden, reddish light.",
+  "tools": [
+   "color_balance"
+  ],
+  "program": {
+   "color_balance": {
+    "cyan_red": 0.488,
+    "yellow_blue": -0.289
+   }
+  },
+  "start": "gimp_b080_start.webp",
+  "target": "gimp_b080_target.webp",
+  "results": [
+   {
+    "model": "GPT-6.1",
+    "img": "gimp_b080_gpt61sol.webp",
+    "pass": true,
+    "closeness": 0.91,
+    "de": 0.67
+   },
+   {
+    "model": "Claude Opus 5.5",
+    "img": "gimp_b080_opus55.webp",
+    "pass": true,
+    "closeness": 0.79,
+    "de": 1.58
+   },
+   {
+    "model": "Qwen3.5-397B",
+    "img": "gimp_b080_qwen35.webp",
+    "pass": false,
+    "closeness": 0.25,
+    "de": 5.61
+   }
+  ]
+ },
+ {
+  "app": "inkscape",
+  "task": "b022",
+  "intent": "Transform the flat vector art into a warm, vibrant autumn illustration with significantly darker, deeper tones and intensified yellow-orange colors.",
+  "tools": [
+   "gamma",
+   "saturate",
+   "tint"
+  ],
+  "program": {
+   "tint": {
+    "hue": 38.0,
+    "strength": 0.439
+   },
+   "gamma": {
+    "exponent": 1.372
+   },
+   "saturate": {
+    "amount": 1.503
+   }
+  },
+  "start": "inkscape_b022_start.webp",
+  "target": "inkscape_b022_target.webp",
+  "results": [
+   {
+    "model": "GPT-6.1",
+    "img": "inkscape_b022_gpt61sol.webp",
+    "pass": true,
+    "closeness": 0.98,
+    "de": 0.25
+   },
+   {
+    "model": "Claude Opus 5.5",
+    "img": "inkscape_b022_opus55.webp",
+    "pass": false,
+    "closeness": 0.69,
+    "de": 4.62
+   },
+   {
+    "model": "Qwen3.5-397B",
+    "img": "inkscape_b022_qwen35.webp",
+    "pass": false,
+    "closeness": 0.69,
+    "de": 4.59
+   }
+  ]
+ },
+ {
+  "app": "blender",
+  "task": "b021",
+  "intent": "I want this to look like a dramatic room with light hitting the frame and a misty atmosphere that softens details and reduces contrast to create mood.",
+  "tools": [
+   "haze",
+   "sun"
+  ],
+  "program": {
+   "sun": {
+    "strength": 4.254,
+    "elevation": 18.0,
+    "azimuth": 70.0
+   },
+   "haze": {
+    "density": 0.045
+   }
+  },
+  "start": "blender_b021_start.webp",
+  "target": "blender_b021_target.webp",
+  "results": [
+   {
+    "model": "GPT-6.1",
+    "img": "blender_b021_gpt61sol.webp",
+    "pass": true,
+    "closeness": 0.91,
+    "de": 1.46
+   },
+   {
+    "model": "Claude Opus 5.5",
+    "img": "blender_b021_opus55.webp",
+    "pass": false,
+    "closeness": 0.57,
+    "de": 6.73
+   },
+   {
+    "model": "Qwen3.5-397B",
+    "img": "blender_b021_qwen35.webp",
+    "pass": false,
+    "closeness": 0.62,
+    "de": 6.0
+   }
+  ]
+ }
+]
