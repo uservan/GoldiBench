@@ -114,13 +114,13 @@ figcaption { font: 500 .74rem/1.2 var(--font-data); color: var(--muted); margin-
 .cliffnote { display: flex; gap: .4rem 1.6rem; flex-wrap: wrap; align-items: baseline; margin: 0 0 .9rem; font-size: .92rem; color: var(--muted); }
 .cliffnote b { font: 700 1.25rem/1 var(--font-display); color: var(--ink); }
 .cliffnote b.l2 { color: var(--gold); }
-.bars { width: 100%; min-width: 600px; border-collapse: collapse; }
+.bars { width: 100%; min-width: 600px; border-collapse: collapse; table-layout: fixed; }
 .bars th { font: 600 .72rem/1.2 var(--font-data); color: var(--muted); letter-spacing: .05em; text-transform: uppercase; text-align: left; padding: 0 8px 8px; border: 0; }
 .bars td { padding: 4px 8px; border: 0; vertical-align: middle; }
 .bars tr.grp td { font: 600 .74rem/1 var(--font-data); color: var(--muted); letter-spacing: .05em; text-transform: uppercase; padding-top: 14px; border-bottom: 1px solid var(--line); }
-.bars td.m { white-space: nowrap; font-size: .9rem; width: 13.5rem; }
+.bars td.m { white-space: nowrap; font-size: .9rem; overflow: hidden; text-overflow: ellipsis; }
 .bars tr.closed td.m { font-weight: 600; }
-.bars td.l1 { width: 11rem; }
+
 .l1v { font: 500 .85rem/1 var(--font-data); font-variant-numeric: tabular-nums; color: var(--muted); }
 .bar { display: flex; align-items: center; gap: 8px; }
 .bar .track { flex: 1; height: 12px; border-radius: 3px; background: color-mix(in srgb, var(--line) 55%, transparent); position: relative; overflow: hidden; }
@@ -145,11 +145,21 @@ td.num { font-family: var(--font-data); } td.best { color: var(--gold); font-wei
 
 /* 6 analysis */
 .findings { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-.finding { padding: 1rem 1.1rem; }
+.finding { padding: 1rem 1.1rem; display: flex; flex-direction: column; }
 .finding .mark { font: 700 1.3rem/1 var(--font-display); }
 .finding .mark.yes { color: var(--pass); } .finding .mark.no { color: var(--fail); }
 .finding h3 { margin-top: .5rem; }
-.finding p { font-size: .9rem; color: var(--muted); margin: 0; }
+.finding p { font-size: .88rem; color: var(--muted); margin: .2rem 0 .7rem; }
+.mini { display: grid; gap: 9px; margin-top: auto; }
+.mini .mrow { display: grid; gap: 4px; }
+.mini .top { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
+.mini .who { font-size: .76rem; color: var(--muted); white-space: nowrap; }
+.mini .tr { position: relative; height: 16px; border-radius: 3px; background: color-mix(in srgb, var(--line) 45%, transparent); }
+.mini .b0 { position: absolute; left: 0; top: 0; height: 100%; border-radius: 3px; background: var(--muted); opacity: .3; }
+.mini .b1 { position: absolute; left: 0; top: 4px; height: 8px; border-radius: 2px; }
+.mini .b1.up { background: var(--pass); } .mini .b1.flat { background: var(--fail); opacity: .8; }
+.mini .lab { font: 500 .74rem/1 var(--font-data); white-space: nowrap; color: var(--muted); text-align: right; } .mini .lab b { color: var(--ink); }
+.mini .na { font-size: .74rem; color: var(--muted); font-style: italic; }
 .scale { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: 20px; align-items: center; padding: 1.1rem 1.2rem; margin-top: 14px; }
 .scale svg { width: 100%; height: auto; }
 
@@ -197,7 +207,7 @@ footer { padding-block: 3rem 2.5rem; color: var(--muted); font-size: .85rem; }
   .bars { min-width: 0; }
   .bars td, .bars th { padding-left: 4px; padding-right: 4px; }
   .bars td.m { width: auto; font-size: .76rem; white-space: normal; }
-  .bars td.l1 { width: 2.6rem; } .bars td.l1 .track { display: none; }
+  .bars td.l1 .track { display: none; }
   .bars th { font-size: .62rem; }
   .scalehint { display: none; }
   .bars .full { display: none; } .bars .short { display: inline; }
@@ -307,14 +317,10 @@ footer { padding-block: 3rem 2.5rem; color: var(--muted); font-size: .85rem; }
 <section aria-labelledby="a-title">
   <div class="eyebrow">Analysis</div>
   <h2 id="a-title">What helps, and what does not</h2>
-  <div class="grid findings" style="margin-top:1rem">
-    <div class="finding card"><div class="mark no">✕</div><h3>The manual</h3><p>Installing the application's manual as a skill barely changes the pass rate.</p></div>
-    <div class="finding card"><div class="mark yes">✓</div><h3>Measured difference</h3><p>Giving the measured TARGET − START difference more than doubles the pass rate.</p></div>
-    <div class="finding card"><div class="mark no">✕</div><h3>Difference as an image</h3><p>The same difference shown as an image does not help open models.</p></div>
-    <div class="finding card"><div class="mark yes">✓</div><h3>Forced comparison</h3><p>Allowed four renders, agents stop after the first. Forced to compare, strong models double.</p></div>
-  </div>
+  <p class="prose muted" style="margin:.2rem 0 0">L2 pass rate (%) on the intervention task subsets, before → after the intervention (same tasks, same models).</p>
+  <div class="grid findings" id="findings" style="margin-top:1rem"></div>
   <div class="scale card">
-    <div><h3>Scale does not close the gap</h3><p class="muted" style="margin:0">Qwen3.5 from 0.8B to 397B parameters, writing programs: L1 reaches 100% from 4B on, L2 stays near 10%.</p></div>
+    <div><h3>Scale does not close the gap</h3><p class="muted" style="margin:0">Qwen3.5 from 0.8B to 397B parameters, writing programs: L1 reaches 100% from 4B on, while L2 moves from 1.4% to 10.5%.</p></div>
     <svg id="scalechart" viewBox="0 0 520 220" role="img" aria-label="Pass rate of Qwen3.5 sizes at L1 and L2"></svg>
   </div>
 </section>
@@ -350,7 +356,7 @@ footer { padding-block: 3rem 2.5rem; color: var(--muted); font-size: .85rem; }
 </div>
 
 <script>
-const BUILD = "20261120-2320";   // cache-buster: bump on every publish
+const BUILD = "20261120-2345";   // cache-buster: bump on every publish
 const PROG = [
  ["Qwen3.5-0.8B",86.6,1.4,0.1,0.88,-0.19,-0.35,"Qwen3.5"],["Qwen3.5-2B",91.9,1.2,0.2,0.93,-0.15,-0.41,"Qwen3.5"],["Qwen3.5-4B",99.1,4.6,0.6,0.99,0.10,-0.12,"Qwen3.5"],
  ["Qwen3.5-9B",99.9,5.3,0.9,1.00,0.10,-0.22,"Qwen3.5"],["Qwen3.5-27B",100.0,7.7,0.6,1.00,0.22,-0.18,"Qwen3.5"],["Qwen3.5-35B-A3B",100.0,6.3,0.9,1.00,0.18,-0.16,"Qwen3.5"],
@@ -378,7 +384,7 @@ const GROUPS = {"Qwen3.5": "Qwen3.5, by size", open: "Other open models", gui: "
 function cliff(rows, chan) {
   const ZOOM = 40, best = [2, 3].map(i => Math.max(...rows.map(r => r[i])));
   const bar = (v, max, cls, isBest) => `<div class="bar ${cls}"><div class="track"><div class="fill" style="width:${Math.min(100, 100 * v / max)}%"></div></div><span class="v${isBest ? " best" : ""}">${v.toFixed(1)}</span></div>`;
-  let h = `<thead><tr><th>Model</th><th><span class="full">L1 tools + values</span><span class="short">L1</span></th><th><span class="full">L2 tools only</span><span class="short">L2</span> <span class="scalehint">scale 0-${ZOOM}%</span></th><th><span class="full">L3 goal only</span><span class="short">L3</span> <span class="scalehint">scale 0-${ZOOM}%</span></th></tr></thead><tbody>`;
+  let h = `<colgroup><col style="width:24%"><col><col><col></colgroup><thead><tr><th>Model</th><th><span class="full">L1 tools + values</span><span class="short">L1</span></th><th><span class="full">L2 tools only</span><span class="short">L2</span> <span class="scalehint">scale 0-${ZOOM}%</span></th><th><span class="full">L3 goal only</span><span class="short">L3</span> <span class="scalehint">scale 0-${ZOOM}%</span></th></tr></thead><tbody>`;
   let prev = null;
   for (const r of rows) {
     if (r[7] !== prev) { h += `<tr class="grp"><td colspan="4">${GROUPS[r[7]] || ""}</td></tr>`; prev = r[7]; }
@@ -406,18 +412,41 @@ document.getElementById("tab-prog").onclick = () => tab("prog");
 document.getElementById("tab-gui").onclick = () => tab("gui");
 tab("prog");
 
+// 6: interventions (L2 pass %, before -> after; paper's interv12.json and the forced runs)
+const IV = [
+  {ok: false, t: "The manual", d: "The application's manual as a skill: no gain.",
+   r: [["Open (12)", 5.7, 4.7], ["Claude", 12.7, 14.0], ["GPT-6.1", 17.3, 16.7]]},
+  {ok: true, t: "Measured difference", d: "The measured TARGET − START difference as numbers: more than double.",
+   r: [["Open (12)", 5.7, 14.9], ["Claude", 12.7, 34.0], ["GPT-6.1", 17.3, 47.3]]},
+  {ok: false, t: "Difference as an image", d: "The same difference shown as an image: no gain for open models.",
+   r: [["Open (12)", 5.7, 6.9], ["Claude", null, null], ["GPT-6.1", null, null]]},
+  {ok: true, t: "Forced comparison", d: "Agents stop after one render; forced to use all four, strong models double.",
+   r: [["Open (12)", 5.6, 8.2], ["Claude", 13.4, 29.8], ["GPT-6.1", 19.0, 50.4]]}];
+(function () {
+  const MAX = 55, pct = v => Math.min(100, 100 * v / MAX);
+  document.getElementById("findings").innerHTML = IV.map(c => `<div class="finding card"><div class="mark ${c.ok ? "yes" : "no"}">${c.ok ? "✓" : "✕"}</div>
+    <h3>${c.t}</h3><p>${c.d}</p><div class="mini">` + c.r.map(([w, a, b]) => a == null
+      ? `<div class="mrow"><div class="top"><span class="who">${w}</span><span class="na">not run</span></div></div>`
+      : `<div class="mrow"><div class="top"><span class="who">${w}</span><span class="lab">${a.toFixed(1)} → <b>${b.toFixed(1)}</b></span></div>` +
+        `<div class="tr"><div class="b0" style="width:${pct(a)}%"></div><div class="b1 ${b >= 1.5 * a ? "up" : "flat"}" style="width:${pct(b)}%"></div></div></div>`).join("") + `</div></div>`).join("");
+})();
+
 // 6: scale chart (Qwen3.5 program channel)
 (function () {
   const svg = document.getElementById("scalechart"), q = PROG.filter(r => r[7] === "Qwen3.5");
   const L = 40, R = 14, T = 12, B = 44, W = 520, H = 220, x = i => L + (W - L - R) * i / (q.length - 1), y = v => T + (H - T - B) * (1 - v / 100);
   for (const t of [0, 50, 100]) { svg.append(el("line", { x1: L, x2: W - R, y1: y(t), y2: y(t), stroke: css("--line") })); svg.append(el("text", { x: L - 6, y: y(t) + 4, "text-anchor": "end", "font-size": 11, fill: css("--muted") }, t + "%")); }
+  svg.append(el("polygon", { points: q.map((r, i) => `${x(i)},${y(r[1])}`).concat(q.map((r, i) => `${x(i)},${y(r[2])}`).reverse()).join(" "), fill: css("--gold"), opacity: 0.08 }));
   for (const [k, col] of [[1, css("--muted")], [2, css("--gold")]]) {
     svg.append(el("polyline", { points: q.map((r, i) => `${x(i)},${y(r[k])}`).join(" "), fill: "none", stroke: col, "stroke-width": 2.5 }));
     q.forEach((r, i) => svg.append(el("circle", { cx: x(i), cy: y(r[k]), r: 3.5, fill: col })));
   }
   q.forEach((r, i) => svg.append(el("text", { x: x(i), y: H - 22, "text-anchor": "middle", "font-size": 10.5, fill: css("--muted") }, r[0].replace("Qwen3.5-", "").replace(/-A\d+B/, ""))));
-  svg.append(el("text", { x: W - R, y: y(100) - 2 + 14, "text-anchor": "end", "font-size": 11, fill: css("--muted") }, "L1"));
-  svg.append(el("text", { x: W - R, y: y(10.5) - 8, "text-anchor": "end", "font-size": 11, fill: css("--gold") }, "L2"));
+  const lab = (i, v, col, dy, anchor, name) => svg.append(el("text", { x: x(i) + (anchor === "start" ? 6 : -6), y: y(v) + dy, "text-anchor": anchor, "font-size": 11, "font-weight": 600, fill: col }, name + " " + v.toFixed(1) + "%"));
+  lab(0, q[0][1], css("--muted"), 18, "start", "L1"); lab(q.length - 1, q[q.length - 1][1], css("--muted"), 18, "end", "L1");
+  lab(0, q[0][2], css("--gold"), -9, "start", "L2"); lab(q.length - 1, q[q.length - 1][2], css("--gold"), -9, "end", "L2");
+  svg.append(el("text", { x: (x(0) + x(q.length - 1)) / 2, y: y(52), "text-anchor": "middle", "font-size": 12, fill: css("--muted") }, "the gap stays ~90 points"));
+
 })();
 
 // 2: strength dial
