@@ -120,14 +120,14 @@ figcaption { font: 500 .74rem/1.2 var(--font-data); color: var(--muted); margin-
 .bars tr.grp td { font: 600 .74rem/1 var(--font-data); color: var(--muted); letter-spacing: .05em; text-transform: uppercase; padding-top: 14px; border-bottom: 1px solid var(--line); }
 .bars td.m { white-space: nowrap; font-size: .9rem; width: 13.5rem; }
 .bars tr.closed td.m { font-weight: 600; }
-.bars td.l1 { width: 8rem; }
+.bars td.l1 { width: 11rem; }
 .l1v { font: 500 .85rem/1 var(--font-data); font-variant-numeric: tabular-nums; color: var(--muted); }
 .bar { display: flex; align-items: center; gap: 8px; }
 .bar .track { flex: 1; height: 12px; border-radius: 3px; background: color-mix(in srgb, var(--line) 55%, transparent); position: relative; overflow: hidden; }
 .bar .fill { position: absolute; inset: 0 auto 0 0; border-radius: 3px; }
 .bar .v { font: 500 .8rem/1 var(--font-data); font-variant-numeric: tabular-nums; min-width: 2.6rem; text-align: right; color: var(--ink); }
 .bar .v.best { color: var(--gold); font-weight: 700; }
-.l1 .fill { background: var(--muted); opacity: .55; } .l2 .fill { background: var(--gold); } .l3 .fill { background: var(--over); opacity: .85; }
+.l1 .fill { background: var(--muted); opacity: .28; } .l1 .v { color: var(--muted); font-weight: 400; } .l2 .fill { background: var(--gold); } .l3 .fill { background: var(--over); opacity: .85; }
 .scalehint { font: 400 .72rem/1 var(--font-data); color: var(--muted); }
 .bars .short { display: none; }
 .cliff svg { width: 100%; min-width: 560px; height: auto; display: block; }
@@ -197,7 +197,7 @@ footer { padding-block: 3rem 2.5rem; color: var(--muted); font-size: .85rem; }
   .bars { min-width: 0; }
   .bars td, .bars th { padding-left: 4px; padding-right: 4px; }
   .bars td.m { width: auto; font-size: .76rem; white-space: normal; }
-  .bars td.l1 { width: 2.6rem; }
+  .bars td.l1 { width: 2.6rem; } .bars td.l1 .track { display: none; }
   .bars th { font-size: .62rem; }
   .scalehint { display: none; }
   .bars .full { display: none; } .bars .short { display: inline; }
@@ -350,7 +350,7 @@ footer { padding-block: 3rem 2.5rem; color: var(--muted); font-size: .85rem; }
 </div>
 
 <script>
-const BUILD = "20261120-2310";   // cache-buster: bump on every publish
+const BUILD = "20261120-2320";   // cache-buster: bump on every publish
 const PROG = [
  ["Qwen3.5-0.8B",86.6,1.4,0.1,0.88,-0.19,-0.35,"Qwen3.5"],["Qwen3.5-2B",91.9,1.2,0.2,0.93,-0.15,-0.41,"Qwen3.5"],["Qwen3.5-4B",99.1,4.6,0.6,0.99,0.10,-0.12,"Qwen3.5"],
  ["Qwen3.5-9B",99.9,5.3,0.9,1.00,0.10,-0.22,"Qwen3.5"],["Qwen3.5-27B",100.0,7.7,0.6,1.00,0.22,-0.18,"Qwen3.5"],["Qwen3.5-35B-A3B",100.0,6.3,0.9,1.00,0.18,-0.16,"Qwen3.5"],
@@ -378,11 +378,11 @@ const GROUPS = {"Qwen3.5": "Qwen3.5, by size", open: "Other open models", gui: "
 function cliff(rows, chan) {
   const ZOOM = 40, best = [2, 3].map(i => Math.max(...rows.map(r => r[i])));
   const bar = (v, max, cls, isBest) => `<div class="bar ${cls}"><div class="track"><div class="fill" style="width:${Math.min(100, 100 * v / max)}%"></div></div><span class="v${isBest ? " best" : ""}">${v.toFixed(1)}</span></div>`;
-  let h = `<thead><tr><th>Model</th><th><span class="full">L1 tools + values (%)</span><span class="short">L1</span></th><th><span class="full">L2 tools only</span><span class="short">L2</span> <span class="scalehint">bar scale 0-${ZOOM}%</span></th><th><span class="full">L3 goal only</span><span class="short">L3</span> <span class="scalehint">bar scale 0-${ZOOM}%</span></th></tr></thead><tbody>`;
+  let h = `<thead><tr><th>Model</th><th><span class="full">L1 tools + values</span><span class="short">L1</span></th><th><span class="full">L2 tools only</span><span class="short">L2</span> <span class="scalehint">scale 0-${ZOOM}%</span></th><th><span class="full">L3 goal only</span><span class="short">L3</span> <span class="scalehint">scale 0-${ZOOM}%</span></th></tr></thead><tbody>`;
   let prev = null;
   for (const r of rows) {
     if (r[7] !== prev) { h += `<tr class="grp"><td colspan="4">${GROUPS[r[7]] || ""}</td></tr>`; prev = r[7]; }
-    h += `<tr class="${r[7] === "closed" ? "closed" : ""}"><td class="m">${r[0]}</td><td class="l1"><span class="l1v">${r[1].toFixed(1)}</span></td>` +
+    h += `<tr class="${r[7] === "closed" ? "closed" : ""}"><td class="m">${r[0]}</td><td class="l1">${bar(r[1], 100, "l1", false)}</td>` +
          `<td class="l2">${bar(r[2], ZOOM, "l2", r[2] === best[0])}</td><td class="l3">${bar(r[3], ZOOM, "l3", r[3] === best[1])}</td></tr>`;
   }
   document.getElementById("cliff").innerHTML = h + "</tbody>";
