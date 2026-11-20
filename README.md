@@ -44,7 +44,7 @@ bash scripts/setup_env.sh                   # optional: the exact vLLM env of th
 ## 2. Get the data
 
 ```bash
-bash scripts/download_data.sh               # -> ./data (or set GOLDIBENCH_DATA); ~6 GB
+bash scripts/download_data.sh               # -> ./data (or set GOLDIBENCH_DATA); ~7 GB as a few tar archives
 ```
 
 `data/bench_b1_<app>/` holds the program-channel tasks, `data/bench_b1_<app>_gui/` the GUI tasks; runs are written to
