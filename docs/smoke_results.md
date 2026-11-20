@@ -57,7 +57,7 @@ GUI channel, darktable task b000 L1, 15 steps, clean-room install (`uv sync --ex
 | EvoCUA-32B (evocua) | vLLM | ran 15 steps, closeness 0.00 |
 
 Every agent produced well-formed replies and executable actions (no action errors, no harness errors). Program channel
-through Bedrock: GPT-6.1 and Claude Opus 5.5 pass L1 on darktable and GIMP. Total cost of these tests: about USD 3.
+through Bedrock: GPT-6.1 and Claude Opus 5.5 pass L1 on darktable and GIMP. Total Bedrock cost of these tests: USD 0.32.
 
 Fixed by these tests: GUI agent dependencies (extra `gui`), the separate OpenCUA env (`scripts/setup_opencua_env.sh`),
 the cost-ledger directory for a fresh data dir, the GUI default task sets.
