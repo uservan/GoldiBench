@@ -2,10 +2,6 @@
 
 **Benchmarking agents on effect judgement in professional editing.**
 
-Wang Yang¹, Xinpeng Li¹, Yanyan Zhang¹, Chaoda Song¹, Shouren Wang¹, Debargha Ganguly¹, Vikash Singh¹, Chuang Ma²,
-Xiaoran Cai³, Kai Ye¹, Xiaotian Han¹, Vipin Chaudhary¹
-¹ Case Western Reserve University · ² NII · ³ Columbia University
-
 [Project page](https://uservan.github.io/GoldiBench) · [Dataset](https://huggingface.co/datasets/VanWang/GoldiBench) ·
 [All run logs](https://huggingface.co/datasets/VanWang/GoldiBench-logs)
 
