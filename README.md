@@ -107,6 +107,13 @@ GOLDIBENCH_DATA=./data MODEL=mymodel GUI_MODEL=myagent tests/smoke.sh   # 5 apps
 
 All raw episodes of the paper (every model output, program, GUI action, screenshot, score, and the cost ledger of the
 closed models) are in [VanWang/GoldiBench-logs](https://huggingface.co/datasets/VanWang/GoldiBench-logs).
+The logs are split by run and part, so download only what you need:
+```bash
+scripts/download_logs.sh                                              # merged tables, runs.csv, costs (small)
+scripts/download_logs.sh --part images --app gimp --run b1g100_s0 --gui   # one run's screenshots
+scripts/download_logs.sh --part raw --paper-only                      # raw records of the paper's runs
+```
+or `load_dataset("VanWang/GoldiBench-logs", "episodes_paper")` (configs listed on the dataset page).
 `goldibench/paper/*.py` builds the tables and figures from them (`main_tables.py` → Tab. main, `main_ci.py` → 95% CIs,
 `ch5_numbers.py` → Sec. 5, `fig_*.py` → figures).
 
