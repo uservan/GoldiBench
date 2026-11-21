@@ -6,8 +6,11 @@ one row per application: example targets, tasks by program length, START-TARGET 
 Data:
   task, intent, ranges, program, renders   bench_b1_darktable/tasks.jsonl, tasks/b057/{start,step1,step2,target}.png
   library ranges                           scripts/bench/ops_darktable.py
-  x0.5 / x1.5 renders + scores             paper_figs/darktable_b057/ (make_pilot.scaled + ops.render, as magnitude_curve.py)
-  thumbnails, statistics, split            bench_b1_<app>/tasks.jsonl, bench_b1_final/manifest.jsonl, bench_b2_darktable
+  x0.5 / x1.5 renders + scores             paper_figs/darktable_b057/ (make_pilot.scaled + ops.render, as magnitude_curve.py;
+                                           rendered by kimgs() when absent, needs darktable: scripts/setup_darktable.sh)
+  thumbnails, statistics, split            bench_b1_<app>/tasks.jsonl; dev / test split and real-edit count from
+                                           bench_b1_final/manifest.jsonl, bench_b2_darktable (download_data.sh --provenance --playraw;
+                                           without them the paper's counts)
   <python with matplotlib> scripts/paper/fig_pipeline.py [--out ...pdf]"""
 import sys as _sys
 from pathlib import Path as _Path
@@ -17,11 +20,24 @@ import argparse,collections,importlib,json,os,sys
 import numpy as np
 from matplotlib.patches import FancyBboxPatch,Rectangle
 from figstyle import *
-sys.path.insert(0,os.path.join(ROOT,'scripts','bench'))
 
 APP,TID='darktable','b057'
 THUMBS={'darktable':'b057','rawtherapee':'b024','gimp':'b004','inkscape':'b028','blender':'b036'}
 V2={0.5:(6.30,0.52,False),1:(0.0,1.0,True),1.5:(7.42,0.43,False)}   # paper_figs/darktable_b057/README.txt
+SPLIT_PAPER={'dev':101,'test':399};REAL_PAPER=160   # Sec. 3 of the paper (used when the manifests are not there)
+KDIR=f'{D}/paper_figs/darktable_b057'
+
+def kimgs(t):
+    """The x0.5 / x1 / x1.5 renders of the task's program (make_pilot.scaled + ops.render, as magnitude_curve.py) in
+    <data>/paper_figs/darktable_b057/; rendered when absent (needs darktable: scripts/setup_darktable.sh), and the scores
+    printed to compare with V2."""
+    if all(os.path.exists(f'{KDIR}/k{f:g}.png') for f in V2):return
+    os.environ.setdefault('BENCH_APP',APP);import ops,make_pilot
+    from score import lab,de
+    os.makedirs(KDIR,exist_ok=True);tk=f'{D}/bench_b1_{APP}/tasks/{TID}';lt=lab(f'{tk}/target.png');d0=de(lab(f'{tk}/start.png'),lt)
+    for f in V2:
+        prog=make_pilot.scaled(t['program'],f)[0];o=f'{KDIR}/k{f:g}.png';ops.render(t['source_path'],prog,o)
+        e=de(lab(o),lt);print(f'x{f:g}: dE {e:.2f} closeness {1-e/d0:.2f} pass {make_pilot.passed(e,d0)} (paper {V2[f]})')
 BARS=[('exposure','exposure','exposure'),('colorbalancergb','vibrance','vibrance'),('vignette','brightness','vignette')]
 STEP=['#c9def8','#93bdf0','#5b9be4','#2a78d6','#104281']
 TINT='white'
@@ -39,8 +55,14 @@ def main(out):
     t=next(json.loads(l) for l in gbpaths.open_tasks(f'{D}/bench_b1_{APP}/tasks.jsonl') if json.loads(l)['task_id']==TID)
     lib=importlib.import_module('ops_'+APP).OPS
     T={a:[json.loads(l) for l in gbpaths.open_tasks(f'{D}/bench_b1_{a}/tasks.jsonl')] for a in APPS}
-    M=[json.loads(l) for l in open(f'{D}/bench_b1_final/manifest.jsonl')];sp=collections.Counter(m['split'] for m in M)
-    real=sum(1 for _ in gbpaths.open_tasks(f'{D}/bench_b2_darktable/tasks.jsonl'))
+    # the dev / test split manifest and the real-edit set (bench_b2_darktable) are optional parts of the dataset
+    # (download_data.sh --provenance --playraw); their counts are taken from the paper when the files are absent
+    mf=f'{D}/bench_b1_final/manifest.jsonl'
+    if os.path.exists(mf):M=[json.loads(l) for l in open(mf)];sp=collections.Counter(m['split'] for m in M)
+    else:M=[t for a in APPS for t in T[a]];sp=SPLIT_PAPER
+    rf=f'{D}/bench_b2_darktable/tasks.jsonl'
+    real=sum(1 for _ in gbpaths.open_tasks(rf)) if os.path.exists(rf) else REAL_PAPER
+    kimgs(t)
     c=Canvas(6.9,2.88);ax=c.ax;tk=f'{D}/bench_b1_{APP}/tasks/{TID}'
     yb,yt=1.2,2.84;g=0.06;xs=[0.03];ws=[1.34,1.3,1.82,2.2]
     for w in ws[:-1]:xs.append(xs[-1]+w+g)

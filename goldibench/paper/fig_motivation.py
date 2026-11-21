@@ -12,8 +12,9 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from matplotlib.patches import Patch
 
-ROOT=os.path.join(os.path.dirname(os.path.abspath(__file__)),'..','..')
-M=os.path.join(ROOT,'motivation');A=os.path.join(M,'benchmark_audit')
+import sys as _sys;_sys.path.insert(0,os.path.join(os.path.dirname(os.path.abspath(__file__)),'..','bench'));_sys.path.insert(0,os.path.dirname(os.path.abspath(__file__)))
+import paperdata
+M=paperdata.MOT;A=os.path.join(M,'benchmark_audit')   # <data>/motivation: scripts/restore_runs.sh --supporting
 # reference palette (dataviz skill): ordinal blue steps 250 / 450 / 650; categorical slots orange, yellow, aqua
 ORD=['#86b6ef','#2a78d6','#104281'];JUDGE,JUDGEREF,METRIC='#eb6834','#eda100','#1baf7a'
 INK,INK2,MUTED,GRID,AXIS,SURF='#0b0b0b','#52514e','#898781','#e1e0d9','#c3c2b7','#ffffff'

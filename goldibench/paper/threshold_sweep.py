@@ -2,7 +2,7 @@
 Same aggregation as main_tables.py (per app: mean over seeds, missing episodes fail; then mean over the five apps).
 Legality is kept: a program episode with violations, or a GUI episode stopped by a gate, fails under every rule.
 Reports, per channel and level, every model's pass rate per rule and Kendall tau of the model order vs. the default rule.
-  python scripts/paper/threshold_sweep.py   -> logs/threshold_sweep.json"""
+  python goldibench/paper/threshold_sweep.py   -> <data>/logs/threshold_sweep.json"""
 import json,os,statistics as st,itertools
 from concurrent.futures import ThreadPoolExecutor
 import sys;sys.path.insert(0,os.path.dirname(__file__))
@@ -66,4 +66,4 @@ for ch,f in (('program',prog),('gui',gui)):
                 'max_abs_change':round(max(abs(R[m,lv][k]-R[m,lv]['c0.75']) for m in ms),1)} for k,_,_ in RULES}
         res[ch][lv]=row;print(ch,lv,json.dumps(row))
     res[ch]['models']={f'{m}|{lv}':{k:round(v,1) for k,v in R[m,lv].items()} for (m,lv) in R}
-json.dump(res,open('logs/threshold_sweep.json','w'),indent=1)
+os.makedirs(f'{D}/logs',exist_ok=True);json.dump(res,open(f'{D}/logs/threshold_sweep.json','w'),indent=1)

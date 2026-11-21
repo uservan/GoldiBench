@@ -61,3 +61,35 @@ through Bedrock: GPT-6.1 and Claude Opus 5.5 pass L1 on darktable and GIMP. Tota
 
 Fixed by these tests: GUI agent dependencies (extra `gui`), the separate OpenCUA env (`scripts/setup_opencua_env.sh`),
 the cost-ledger directory for a fresh data dir, the GUI default task sets.
+
+## Sample rerun of every paper condition with full-reply logging (2026-11-21)
+
+Clean install (fresh clone, dataset from the Hub, applications from their official downloads, vLLM 0.31.0), 3 tasks per
+application, every condition of the paper, `--log-replies` on. Packaged as `supplementary/` of `VanWang/GoldiBench-logs`
+(episodes, steps, every call with full reply / reasoning / tokens, renders and full GUI trajectories, comparison with the
+paper's records). Program channel: Qwen3.5-9B and Step-3.7-Flash on all conditions (main L1-L3, manual, table, tdiff,
+diffimg, minimanual visual / text, forced, forced + numeric feedback), Claude Opus 5.5 on main, manual, forced, feedback
+(1 task / app). GUI channel (100 steps, seed 0): Holo4-35B-A3B-FP8 and Qwen3.5-9B (OSWorld QwenAgent) on L1-L3 of all
+5 apps; Claude Opus 5.5 computer use on L1 + L2 of all 5 apps and L3 of darktable (1 task / app).
+
+| channel | condition | model | episodes | pass (rerun) | pass (paper, same tasks) | closeness (rerun / paper) |
+|---|---|---|---|---|---|---|
+| program | main | qwen35_9b | 45 | 0.36 | 0.34 (5 seeds) | 0.25 / 0.16 |
+| program | main | step37 | 45 | 0.36 | 0.33 | 0.29 / 0.31 |
+| program | main | opus55 | 15 | 0.33 | 0.33 | 0.48 / 0.47 |
+| program | manual | qwen35_9b / step37 / opus55 | 15 / 15 / 5 | 0.00 / 0.07 / 0.00 | 0.00 / 0.00 / 0.00 | 0.24 / 0.16, 0.25 / -0.01, 0.28 / 0.25 |
+| program | table | qwen35_9b / step37 | 15 / 15 | 0.00 / 0.07 | 0.07 / 0.00 | -0.53 / -0.55, -0.05 / 0.08 |
+| program | tdiff | qwen35_9b / step37 | 15 / 15 | 0.13 / 0.07 | 0.20 / 0.07 | 0.09 / 0.19, 0.11 / 0.14 |
+| program | diffimg | qwen35_9b / step37 | 15 / 15 | 0.00 / 0.07 | 0.07 / 0.07 | -0.09 / -0.17, 0.12 / 0.01 |
+| program | minimanual visual | qwen35_9b / step37 | 15 / 15 | 0.00 / 0.00 | 0.00 / 0.00 | -0.28 / -0.76, -0.19 / 0.06 |
+| program | minimanual text | qwen35_9b / step37 | 15 / 15 | 0.07 / 0.00 | 0.00 / 0.07 | -0.23 / -0.42, 0.14 / 0.10 |
+| program | forced | qwen35_9b / step37 / opus55 | 30 / 30 / 10 | 0.07 / 0.00 / 0.10 | 0.00 / 0.00 / 0.10 | -0.14 / -0.12, -0.14 / -0.08, 0.32 / 0.30 |
+| program | forced + feedback | qwen35_9b / step37 / opus55 | 30 / 30 / 10 | 0.03 / 0.03 / 0.10 | 0.00 / 0.07 / 0.10 | 0.07 / -0.04, 0.00 / 0.21, 0.35 / 0.40 |
+| GUI | main | holo4_35b | 45 | 0.11 | 0.08 (3 seeds) | 0.03 / -0.06 |
+| GUI | main | qwen35gui_9b | 45 | 0.02 | 0.00 (3 seeds) | -0.41 / -0.47 |
+| GUI | main | opus55gui | 11 | 0.45 | 0.45 | 0.62 / 0.68 |
+
+No harness errors in 531 episodes / 8,936 calls (no failed render, model call, GUI harness error or agent exception).
+Same failure modes as the paper: L1 passes and L2 / L3 mostly fail; on `tdiff` / `table` the reasoning often runs into
+the 32k budget (step37 tdiff "no valid reply" 13 / 15 here, 12 / 15 in the paper); GUI agents mostly stop at 100 steps.
+Bedrock cost of the rerun: USD 23.09. Single episodes differ from the paper's (sampling is not bit-reproducible).

@@ -96,9 +96,34 @@ def upstreams(port):
     import socket
     return _up['map'].get(f"{socket.gethostname().split('.')[0]}:{port}") or _up['map'].get(str(port)) or [f'127.0.0.1:{port}']
 
-def start_proxy(port,seed=None):
+# --log-replies (run_gui_osworld.py; off by default, added after the paper): every model call of an episode is appended in
+# full to <episode>/calls.jsonl (reply message incl. reasoning and tool calls, finish_reason, usage, latency). Open models
+# and the PromptAgent go through an episode-own proxy (start_proxy(log=...)); Claude's calls are logged in claude_agent.
+EPISODE_LOG=threading.local()   # .path = calls.jsonl of the episode running in this thread (Claude)
+_log_lock=threading.Lock()
+def log_reply(path,rec):
+    if not path:return
+    with _log_lock,open(path,'a') as f:f.write(json.dumps(rec,default=str)+'\n')
+
+def _call_record(body,code,out,dt):
+    try:j=json.loads(out)
+    except ValueError:j={'raw':out[:20000].decode('utf-8','replace')}
+    ch=(j.get('choices') or [{}])[0] if isinstance(j,dict) else {};msg=ch.get('message') or {}
+    return {'t':time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime()),'model':body.get('model'),'seed':body.get('seed'),
+            'n_messages':len(body.get('messages',[])),'http_status':code,'latency_s':round(dt,3),
+            'finish_reason':ch.get('finish_reason'),'content':msg.get('content'),
+            'reasoning_content':msg.get('reasoning_content',msg.get('reasoning')),'tool_calls':msg.get('tool_calls'),
+            'usage':j.get('usage') if isinstance(j,dict) else None,'error':j.get('error') if isinstance(j,dict) else None}
+
+_servers={}
+def stop_proxy(url):
+    srv=_servers.pop(url,None)
+    if srv:srv.shutdown();srv.server_close()
+
+def start_proxy(port,seed=None,log=None):
     """OpenAI-compatible proxy on a free local port in front of the vLLM server(s) of `port`; returns its base URL.
-    `seed` is added to every request that has none (vLLM per-request sampling seed; repeat runs differ only by it)."""
+    `seed` is added to every request that has none (vLLM per-request sampling seed; repeat runs differ only by it).
+    `log`: path of a calls.jsonl that gets every request's full reply and usage (--log-replies)."""
     class H(BaseHTTPRequestHandler):
         def log_message(self,*a):pass
         def do_POST(self):
@@ -106,7 +131,7 @@ def start_proxy(port,seed=None):
             if seed is not None:body.setdefault('seed',seed)
             data=json.dumps(inject_target(body)).encode()
             with _lock:ups=sorted(upstreams(port),key=lambda u:_inflight.get(u,0))
-            err=None
+            err=None;t0=time.time()
             for u in ups:
                 with _lock:_inflight[u]=_inflight.get(u,0)+1
                 try:
@@ -119,13 +144,15 @@ def start_proxy(port,seed=None):
                 finally:
                     with _lock:_inflight[u]-=1
             else:raise err
+            if log:log_reply(log,_call_record(body,code,out,time.time()-t0))
             self.send_response(code);self.send_header('Content-Type','application/json');self.send_header('Content-Length',str(len(out)))
             self.end_headers();self.wfile.write(out)
         def do_GET(self):
             with urllib.request.urlopen(f'http://{upstreams(port)[0]}{self.path}',timeout=30) as r:out=r.read()
             self.send_response(200);self.end_headers();self.wfile.write(out)
     srv=ThreadingHTTPServer(('127.0.0.1',0),H);threading.Thread(target=srv.serve_forever,daemon=True).start()
-    return f'http://127.0.0.1:{srv.server_address[1]}/v1'
+    url=f'http://127.0.0.1:{srv.server_address[1]}/v1';_servers[url]=srv
+    return url
 
 # ---- pyautogui stand-in: every call becomes one DarktableEnv.step action ----
 class PyAutoGUI:
@@ -411,7 +438,15 @@ def claude_agent(model,max_steps):
             budget=float(os.environ.get('BEDROCK_BUDGET_USD','inf'))   # optional spending cap (USD) over the cost ledger
             if (sp:=_spent())>=budget:raise OSError(f'budget reached: ${sp:.2f} >= ${budget:.2f} (BEDROCK_BUDGET_USD)')   # harness error, retried later
             _anthropic_target(kw['messages'])
-            r=orig(client,_agent=_agent,**kw);u=r.usage
+            t0=time.time();r=orig(client,_agent=_agent,**kw);u=r.usage
+            path=getattr(EPISODE_LOG,'path',None)
+            if path:   # --log-replies: content blocks in full (text, thinking, tool_use), usage, stop reason
+                blocks=[b.model_dump() if hasattr(b,'model_dump') else str(b) for b in (r.content or [])]
+                for b in blocks:   # the signature of a thinking block is an opaque blob, not model output
+                    if isinstance(b,dict) and b.get('signature'):b['signature']=f"<{len(b['signature'])} chars>"
+                log_reply(path,{'t':time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime()),'model':kw.get('model'),
+                                'n_messages':len(kw.get('messages',[])),'latency_s':round(time.time()-t0,3),'finish_reason':r.stop_reason,
+                                'content':blocks,'usage':u.model_dump() if hasattr(u,'model_dump') else str(u)})
             inp=u.input_tokens+(getattr(u,'cache_read_input_tokens',0) or 0)+(getattr(u,'cache_creation_input_tokens',0) or 0)
             usd=inp*CLAUDE_PRICE[0]/1e6+u.output_tokens*CLAUDE_PRICE[1]/1e6
             _ledger().parent.mkdir(parents=True,exist_ok=True)   # a fresh data dir has no logs/ yet

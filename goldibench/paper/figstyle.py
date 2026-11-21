@@ -5,6 +5,7 @@ import sys as _sys
 from pathlib import Path as _Path
 _sys.path.insert(0, str(_Path(__file__).resolve().parent.parent / 'bench'))
 import gbpaths
+import paperdata
 import os
 import matplotlib
 matplotlib.use('Agg')
@@ -26,7 +27,9 @@ for f in os.listdir(os.path.join(HERE,'fonts')):font_manager.fontManager.addfont
 plt.rcParams.update({'font.family':'Source Sans Pro','pdf.fonttype':42,'font.size':7,'savefig.dpi':DPI,'image.interpolation':'none'})
 
 def load(p,s=1200):
-    im=Image.open(p).convert('RGB');im.thumbnail((s,s));return im
+    # agent renders restored from the logs dataset are WebP (q90) at the original path: used when the PNG is absent
+    # (paperdata.local; scripts/restore_runs.sh --images ...; re-rendering the episode's final program gives the exact PNG)
+    im=Image.open(paperdata.local(p)).convert('RGB');im.thumbnail((s,s));return im
 
 def square(im):
     s=min(im.size);l,t=(im.width-s)//2,(im.height-s)//2;return im.crop((l,t,l+s,t+s))

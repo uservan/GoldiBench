@@ -38,7 +38,7 @@ def main(out):
         c.img(square(load(r['path'],400)),xm-iw/2,y_c,iw,ec=col,lw=1.0)
         ax.text(xm,ys[0],what(r),ha='center',va='top',fontsize=6,color=INK2)
         ax.text(xm,ys[1],f"{'pass' if ok else 'fail'} {r['closeness']:.2f}",ha='center',va='top',fontsize=6.2,color=col,fontweight='semibold')
-        jd=J[(a,t,cand)];votes=[sum(v)*2>len(v) for v in jd.values()]
+        jd=J[(a,t,cand)];jd={k:[x for x in v if x is not None] for k,v in jd.items()};votes=[sum(v)*2>len(v) for v in jd.values() if v]   # unparsed verdicts (null) left out
         txt=f"{sum(votes)}/{len(votes)} pass"
         ax.text(xm,ys[2],txt,ha='center',va='top',fontsize=6,color=INK if all(v==ok for v in votes) else FAIL)
         rv=RATERS.get((a,t,cand))

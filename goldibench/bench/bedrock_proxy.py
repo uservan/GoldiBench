@@ -121,8 +121,13 @@ async def call_claude(client,name,bid,extra,body):
             msg=await st.get_final_message()
     u=msg.usage;log(name,u.input_tokens+(u.cache_read_input_tokens or 0)+(u.cache_creation_input_tokens or 0),u.output_tokens,{'stop':msg.stop_reason,'format':mode})
     text=''.join(b.text for b in msg.content if b.type=='text')
+    # extra reply fields (2026-11-21, read by --log-replies; ignored by the agents): the thinking text as returned (Opus 5.5
+    # returns a summary or nothing for redacted blocks) and the token usage
+    think='\n'.join(getattr(b,'thinking','') or '' for b in msg.content if b.type=='thinking') or None
+    meta={'reasoning_content':think,'usage':{'prompt_tokens':u.input_tokens,'completion_tokens':u.output_tokens,
+          'cache_read_input_tokens':u.cache_read_input_tokens,'cache_creation_input_tokens':u.cache_creation_input_tokens,'stop_reason':msg.stop_reason}}
     if mode=='text':text=extract_json(text)
-    return text,('length' if msg.stop_reason=='max_tokens' else 'stop' if msg.stop_reason!='refusal' else 'refusal')
+    return text,('length' if msg.stop_reason=='max_tokens' else 'stop' if msg.stop_reason!='refusal' else 'refusal'),meta
 
 # ---- other providers (Converse) ----
 RT=boto3.client('bedrock-runtime',region_name=REGION,config=Config(retries={'max_attempts':10,'mode':'adaptive'},read_timeout=900))
@@ -154,8 +159,10 @@ def call_converse(name,bid,extra,body):
     u=r['usage'];inp=u['inputTokens']+u.get('cacheReadInputTokens',0)+u.get('cacheWriteInputTokens',0)
     log(name,inp,u['outputTokens'],{'stop':r.get('stopReason'),'raw_usage':u,'request_fields':extra or None})
     text=''.join(x.get('text','') for x in r['output']['message']['content'])
+    think='\n'.join(x['reasoningContent'].get('reasoningText',{}).get('text','') for x in r['output']['message']['content'] if 'reasoningContent' in x) or None
+    meta={'reasoning_content':think,'usage':{'prompt_tokens':u['inputTokens'],'completion_tokens':u['outputTokens'],'raw':u,'stop_reason':r.get('stopReason')}}
     # JSON extraction only for schema requests (run_agent); free-text callers (GUI agents) get the reply unchanged
-    return (extract_json(text) if schema else text),('length' if r.get('stopReason')=='max_tokens' else 'stop')
+    return (extract_json(text) if schema else text),('length' if r.get('stopReason')=='max_tokens' else 'stop'),meta
 
 async def handle(request):
     body=await request.json();name=body['model']
@@ -163,12 +170,13 @@ async def handle(request):
     kind,bid,extra=MODELS[name]
     if (sp:=spent())>=BUDGET:return web.json_response({'error':f'budget reached: ${sp:.2f} >= ${BUDGET:.2f} (BEDROCK_BUDGET_USD)'},status=503)
     try:
-        if kind=='claude':text,fin=await call_claude(request.app['claude'],name,bid,extra,body)
-        else:text,fin=await asyncio.get_running_loop().run_in_executor(POOL,call_converse,name,bid,extra,body)
+        if kind=='claude':text,fin,meta=await call_claude(request.app['claude'],name,bid,extra,body)
+        else:text,fin,meta=await asyncio.get_running_loop().run_in_executor(POOL,call_converse,name,bid,extra,body)
     except (anthropic.APIError,Exception) as e:
         with LEDGER.open('a') as f:f.write(json.dumps({'t':time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime()),'model':name,'input_tokens':0,'output_tokens':0,'usd':0,'price_assumed':PRICES[name][2],'error':repr(e)[:300]})+'\n')
         return web.json_response({'error':repr(e)[:500]},status=502)
-    return web.json_response({'choices':[{'message':{'role':'assistant','content':text},'finish_reason':fin}]})
+    return web.json_response({'choices':[{'message':{'role':'assistant','content':text,'reasoning_content':meta['reasoning_content']},
+                                          'finish_reason':fin}],'usage':meta['usage']})
 
 async def health(request):return web.Response(text='ok')
 async def models(request):return web.json_response({'object':'list','data':[{'id':m,'object':'model'} for m in MODELS]})   # reachability check of run_gui_osworld

@@ -28,7 +28,8 @@ closed = ["anthropic>=0.50", "boto3>=1.35", "aiohttp>=3.10"]
 # GUI channel: imports of OSWorld's agent modules (mm_agents) that the GUI agents use
 gui = ["python-dotenv>=1.0", "loguru>=0.7", "google-api-core>=2.20", "google-generativeai>=0.8", "dashscope>=1.20", "oss2>=2.18", "groq>=0.11"]
 # paper tables and figures (goldibench/paper)
-paper = ["matplotlib>=3.9", "pymupdf>=1.24", "pandas>=2.2", "pyarrow>=17"]
+paper = ["matplotlib==3.10.9",   # figures are byte-for-byte only with this version (3.11 shifts layout by <=1.5 pt)
+          "pymupdf>=1.24", "pandas>=2.2", "pyarrow>=17"]
 dev = ["pytest>=8"]
 
 [tool.uv]

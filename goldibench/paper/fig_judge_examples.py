@@ -10,7 +10,9 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from PIL import Image
 
-ROOT=os.path.join(os.path.dirname(os.path.abspath(__file__)),'..','..');MOT=os.path.join(ROOT,'motivation')
+import sys as _sys;_sys.path.insert(0,os.path.join(os.path.dirname(os.path.abspath(__file__)),'..','bench'));_sys.path.insert(0,os.path.dirname(os.path.abspath(__file__)))
+import paperdata
+MOT=paperdata.MOT   # <data>/motivation: scripts/restore_runs.sh --supporting
 INK,BAD,EDGE='#0b0b0b','#d03b3b','#c3c2b7'
 LABEL={'half':'×0.5 strength','over':'×3 strength','opposite':'opposite'}
 
@@ -34,7 +36,7 @@ def example(src,t,c):
            f'ours: fail ($\\Delta E$ {float(m["de00"]):.1f})'
 
 def thumb(p,w=420):
-    im=Image.open(p).convert('RGB');return im.resize((w,round(im.height*w/im.width)),Image.LANCZOS)
+    im=Image.open(paperdata.local(p)).convert('RGB');return im.resize((w,round(im.height*w/im.width)),Image.LANCZOS)
 
 def main(examples,out):
     plt.rcParams.update({'font.family':'DejaVu Sans','pdf.fonttype':42})

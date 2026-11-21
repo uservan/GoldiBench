@@ -49,3 +49,20 @@ model groups) are kept verbatim in the raw snapshot (`VanWang/ves-raw-snapshot-2
 
 The exact launch lines (GPU groups, memory fractions) are in the raw snapshot, `scripts/pipelines/b1_iter.sh`,
 `b1_gui*.sh`, `extra_open.sh`, `b1_more.sh`.
+
+## Full-reply logging (`--log-replies`, added after the paper)
+
+`run_agent.py --log-replies` and `run_gui_osworld.py --log-replies` append every model call of an episode to
+`<episode>/calls.jsonl`: the reply message in full (`content`, `reasoning_content` as the server returns it, `tool_calls`),
+`finish_reason`, `usage` (prompt / completion tokens; reasoning tokens when the server reports them), `latency_s`, the
+sampling seed and the HTTP status. Off by default; it changes no prompt, sampling setting or score. The paper's runs were
+made without it: their `episode.json` keeps the program and the first 400 characters of the rationale per round (program
+channel) and the last 3000 characters of each reply (GUI channel); open-model token counts were not recorded.
+
+- Open models: what vLLM returns (`reasoning_content` needs the model's `--reasoning-parser`, see the table above).
+- GUI agents: each episode gets its own proxy (`osworld_agents.start_proxy(log=...)`), so the log holds exactly that
+  episode's calls; Claude (OSWorld computer use) logs its content blocks (text, thinking, tool_use) and usage.
+- Closed models through `bedrock_proxy.py`: the proxy now also returns `usage` and the thinking / reasoning text that
+  Bedrock gives back (Claude Opus 5.5 returns summarised or no thinking text; GPT-6.1's reasoning is not returned).
+
+`tests/smoke.sh` with `LOG_REPLIES=1` turns it on and checks that every episode has a `calls.jsonl`.

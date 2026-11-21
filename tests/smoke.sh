@@ -14,6 +14,7 @@ SMOKE_DIR=${SMOKE_DIR:-$(mktemp -d /tmp/goldibench_smoke.XXXX)}; mkdir -p "$SMOK
 PY=${PYTHON:-python3}
 export GOLDIBENCH_MODELS=${GOLDIBENCH_MODELS:-$REPO/configs/smoke.yaml}
 APPS=${APPS-"darktable rawtherapee gimp inkscape blender"}   # APPS="" = GUI channel only
+LOGF=""; [ "${LOG_REPLIES:-0}" = 1 ] && LOGF="--log-replies"   # full replies + usage to <episode>/calls.jsonl
 
 # scratch data dir: everything links to the dataset, only runs/ is real
 for d in sources assets manuals minimanual; do [ -e "$SRC/$d" ] && ln -sfn "$SRC/$d" "$SMOKE_DIR/$d"; done
@@ -30,7 +31,7 @@ fail=0
 for a in $APPS; do
   echo "== program channel: $a"
   BENCH_APP=$a BENCH_SET=bench_b1_$a $PY "$REPO/goldibench/bench/run_agent.py" --models "$MODEL" --levels L1 L2 \
-    --run smoke --limit 1 --rounds 2 --max-tokens 8000 --concurrency 2 || { echo "FAIL run $a"; fail=1; continue; }
+    --run smoke --limit 1 --rounds 2 --max-tokens 8000 --concurrency 2 $LOGF || { echo "FAIL run $a"; fail=1; continue; }
   BENCH_APP=$a BENCH_SET=bench_b1_$a $PY "$REPO/goldibench/bench/score.py" --run smoke > "$SMOKE_DIR/score_$a.txt" 2>&1 \
     || { echo "FAIL score $a"; tail -5 "$SMOKE_DIR/score_$a.txt"; fail=1; continue; }
   $PY - "$SMOKE_DIR/bench_b1_$a/runs/smoke/scores.json" <<'E'
@@ -45,7 +46,7 @@ if [ "${SKIP_GUI:-0}" != 1 ]; then
   for ga in ${GUI_APPS:-darktable}; do
     echo "== GUI channel: $ga"
     BENCH_APP=$ga $PY "$REPO/goldibench/gui/run_gui_osworld.py" --models "$GUI_MODEL" --levels L1 --tasks b000 \
-      --run smoke --max-steps ${GUI_STEPS:-15} --concurrency 1 || { echo "FAIL gui $ga"; fail=1; }
+      --run smoke --max-steps ${GUI_STEPS:-15} --concurrency 1 $LOGF || { echo "FAIL gui $ga"; fail=1; }
     for e in "$SMOKE_DIR"/bench_b1_${ga}_gui/runs/smoke/*/episode.json; do
       [ -f "$e" ] && $PY -c "import json,sys;e=json.load(open(sys.argv[1]));print('  ',e['id'],e['model'],e['end'],e['n_steps'],'steps pass=',e['eval'].get('pass'),'closeness=',e['eval'].get('closeness'))" "$e"
     done
@@ -57,4 +58,10 @@ bad=$( { grep -lE '"error": "render failed"|"exception":' "$SMOKE_DIR"/bench_b1_
          grep -lE '"response": "agent error|"end": "harness error"' "$SMOKE_DIR"/bench_b1_*_gui/runs/smoke/*/episode.json
          ls "$SMOKE_DIR"/bench_b1_*_gui/runs/smoke/*/harness_error.json; } 2>/dev/null || true)
 [ -n "$bad" ] && { echo "harness failures in:"; echo "$bad"; fail=1; }
+if [ -n "$LOGF" ]; then   # every episode must have its calls.jsonl with at least one reply
+  for e in "$SMOKE_DIR"/bench_b1_*/runs/smoke/*/*/episode.json "$SMOKE_DIR"/bench_b1_*_gui/runs/smoke/*/episode.json; do
+    [ -f "$e" ] || continue; c=$(dirname "$e")/calls.jsonl
+    [ -s "$c" ] && echo "   calls.jsonl: $(wc -l < "$c") calls in $(basename "$(dirname "$e")")" || { echo "FAIL no calls.jsonl for $e"; fail=1; }
+  done
+fi
 [ $fail = 0 ] && echo "SMOKE OK" || { echo "SMOKE FAILED"; exit 1; }

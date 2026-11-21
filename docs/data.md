@@ -43,6 +43,19 @@ manuals/                           application manuals (the --manual interventio
                                    task subsets of the Sec. 5 interventions (minimanual/subsets/<app>.txt)
 ```
 
+Optional parts (not needed to run the benchmark; `scripts/download_data.sh --provenance --playraw`):
+
+```
+bench_b1_final/manifest.jsonl      every task with its dev / test split (20 / 80 per app, Inkscape 21 / 79; "held-out" = never used while the
+                                   pipeline and prompts were developed, the answers are public like the rest)
+bench_b1_<app>/generation_log.jsonl  every generated candidate (status ok / the check it failed; Tab. drops, Kept of Tab. bench-stats)
+bench_b1_<app>/dropped_*/, aborted_attempts/   candidates removed by the checks or by human review, failed generation attempts
+bench_b2_darktable/                the 160 PlayRaw real edits (Sec. 4, PlayRaw row of Tab. bench-stats): tasks.jsonl, tasks/,
+                                   drops.jsonl, validation.json; CREDITS.csv gives per task the forum thread, the author of
+                                   the edit and its licence. Not CC-BY: each task keeps the licence of its thread; 6 tasks
+                                   whose thread states no licence ship without images (IMAGES_NOT_INCLUDED.txt)
+```
+
 ## 2. GoldiBench-logs (the paper's experiments, for analysis and rebuttal)
 
 Only the experiments of the paper (no smoke tests, pilots, abandoned or superseded runs), laid out as
@@ -53,6 +66,17 @@ the condition ↔ original run name table, every column, which screenshots are s
 https://huggingface.co/datasets/VanWang/GoldiBench-logs
 
 Download parts with `scripts/download_logs.sh --channel gui --app gimp --model gpt61gui` or `--tables-only`.
+
+Added on 2026-11-21: the GUI intervention runs (`gui/<app>/<model>/tdiff/`), the PlayRaw runs
+(`program/darktable_playraw/`), more full GUI screenshot trajectories (`gui/<app>/_more_screenshots/`, coverage in
+`gui/_more_screenshots_COVERAGE.csv`), and `supplementary/`: a post-hoc sample rerun of every condition (not a paper run)
+with `--log-replies`, which keeps every model reply in full with its reasoning text and token usage. The paper's runs
+did not keep these (see [conditions.md](conditions.md)).
+
+`supporting/` holds the judge experiments of Sec. 2 (`motivation_e3`, `motivation_e3x`, and under `motivation_repo` the
+judgments, manifests and audit tables) and the human study of Sec. 4.1 (`validation_v5`: pairs, candidate images, VLM
+judgments, human ratings). `scripts/download_supporting.sh` unpacks them to `<data>/supporting/` for the code in
+`goldibench/judge/`; [judges.md](judges.md) lists every file and how each paper number is computed from it.
 
 ## 3. Raw snapshot
 

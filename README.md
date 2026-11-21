@@ -45,7 +45,8 @@ bash scripts/setup_opencua_env.sh           # optional: OpenCUA needs its own vL
 ## 2. Get the data
 
 ```bash
-bash scripts/download_data.sh               # -> ./data (or set GOLDIBENCH_DATA); ~7 GB as a few tar archives
+bash scripts/download_data.sh               # -> ./data (or set GOLDIBENCH_DATA); ~9 GB as a few tar archives
+bash scripts/download_data.sh --provenance --playraw   # + dev/test split, generation logs, PlayRaw real edits
 ```
 
 `data/bench_b1_<app>/` holds the program-channel tasks, `data/bench_b1_<app>_gui/` the GUI tasks; runs are written to
@@ -111,13 +112,15 @@ All raw episodes of the paper (every model output, program, GUI action, screensh
 closed models) are in [VanWang/GoldiBench-logs](https://huggingface.co/datasets/VanWang/GoldiBench-logs). Restore them
 into the original run layout and run the paper scripts:
 ```bash
-bash scripts/download_data.sh                      # the benchmark (GOLDIBENCH_DATA)
-bash scripts/restore_runs.sh                       # every run of the paper from the logs dataset (raw records only)
+bash scripts/download_data.sh --provenance --playraw   # the benchmark (GOLDIBENCH_DATA) + split, generation logs, PlayRaw
+bash scripts/restore_runs.sh --supporting          # every run of the paper (raw records) + the Sec. 2 / 4 data
+python goldibench/paper/score_report.py            # text reports of the runs
 GOLDIBENCH_PAPER=./paper_out python goldibench/paper/main_tables.py   # -> paper_out/tab/main_prog.tex, main_gui.tex, ...
 ```
-Checked before release: the regenerated main tables are identical to the paper's (program 42/42, GUI 75/75 entries,
-per-application tables 210/210 and 375/375; the LaTeX rows match line by line). Other scripts: `main_ci.py` (95% CIs),
-`ch5_numbers.py` (Sec. 5), `threshold_sweep.py`, `fig_*.py` (figures).
+Checked on a clean install from the public data (2026-11-21): the main and per-application tables, the bootstrap
+intervals, Tab. thresholds, Tab. interventions, Tab. bench-stats and the run reports are identical to the paper's; every
+figure of the paper regenerates with the same plotted data (identical vector paths with matplotlib 3.10.9).
+[docs/paper.md](docs/paper.md) lists every script, the paper item it produces and how it was checked.
 
 The logs are organised as `<channel>/<app>/<model>/<condition>/seed<k>/`, so download only what you need:
 ```bash
@@ -125,6 +128,15 @@ scripts/download_logs.sh --tables-only                                    # all 
 scripts/download_logs.sh --channel gui --app gimp --model gpt61gui        # one model on one app, with screenshots
 ```
 or `load_dataset("VanWang/GoldiBench-logs", "episodes_paper")` (configs listed on the dataset page).
+
+The judge experiments of Sec. 2 (PSBench's judge on controlled wrong results, on darktable renders, on an image-editing
+model) and the human study of Sec. 4.1 (913 pairs, VLM judges, Tab. judge) are in `goldibench/judge/`, documented in
+[docs/judges.md](docs/judges.md):
+```bash
+bash scripts/download_supporting.sh                        # judgments, pairs, human ratings, candidates, PSBench tasks
+python -m goldibench.judge.motivation_numbers --check       # Sec. 2 / Supp. A numbers, compared with the paper
+python -m goldibench.judge.human_agreement --check         # Tab. judge, Sec. 4.1 / Supp. C.1 numbers
+```
 
 ## 7. Building the benchmark (optional)
 
@@ -141,11 +153,13 @@ goldibench/bench/   program channel: ops_<app>.py (tools, ranges, renderer), run
 goldibench/gui/     GUI channel: per-app desktop envs (env.py darktable, gimp_env.py, app_envs.py), OSWorld agent adapters
                     (osworld_agents.py), runner (run_gui_osworld.py), scorer (score_gui.py), GUI task builders
 goldibench/paper/   tables and figures of the paper
+goldibench/judge/   Sec. 2 judge stress tests (PSBench judge: E3, E3-X, C1) and the Sec. 4.1 human study (pairs, page, VLM judges)
 scripts/            installers, vLLM server, data download
 configs/            model lists (models.example.yaml, smoke.yaml)
 env/                exact lock file of the vLLM environment used in the paper
-docs/               data.md (every file of the dataset and the logs), conditions.md (paper runs → flags), gui.md
-tests/              smoke.sh
+docs/               data.md (every file of the dataset and the logs), conditions.md (paper runs → flags), gui.md,
+                    judges.md (judge experiments and human study)
+tests/              smoke.sh, judge_numbers.sh
 ```
 
 ## License

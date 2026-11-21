@@ -24,9 +24,13 @@ or the same cards without the sheet (text). The rest of the prompt is unchanged.
 --feedback numeric: each RESULT also reports its mean CIEDE2000 to TARGET and START's (the signal search.py uses).
 --forced: every one of --rounds rounds is used (the prompt says so; done is ignored). Without it ~95 % of v5 episodes
 set done=true on their first program and never see a RESULT.
+--log-replies (off by default; added after the paper, it does not change prompts, sampling or scoring): every model call
+is appended to <episode>/calls.jsonl in full: the reply message (content, reasoning_content / reasoning, tool_calls),
+finish_reason, usage (prompt / completion / reasoning tokens as the server reports them) and latency. The paper's runs
+did not have it: they kept only the program and the first 400 characters of the rationale (episode.json).
 """
 from pathlib import Path
-import argparse,asyncio,base64,io,json,sys
+import argparse,asyncio,base64,io,json,sys,time
 from concurrent.futures import ThreadPoolExecutor
 import httpx
 from PIL import Image
@@ -119,6 +123,17 @@ def feedback(d,out):
     return (f'. Distance to TARGET (mean CIEDE2000, lower is better): {de(lab(out),lt):.2f}; '
             f'START was {de(lab(d/"start.png"),lt):.2f}')
 
+def log_call(run,r,calls,attempt,body,resp,dt):
+    """--log-replies: one line per model call with the full reply and the server's token usage (images not repeated)."""
+    try:j=resp.json()
+    except ValueError:j={'raw':resp.text[:20000]}
+    ch=(j.get('choices') or [{}])[0];msg=ch.get('message') or {}
+    rec={'round':r,'tool_calls_so_far':calls,'attempt':attempt,'seed':body.get('seed'),'model':body.get('model'),
+         'http_status':resp.status_code,'latency_s':round(dt,3),'finish_reason':ch.get('finish_reason'),
+         'content':msg.get('content'),'reasoning_content':msg.get('reasoning_content',msg.get('reasoning')),
+         'tool_calls':msg.get('tool_calls'),'usage':j.get('usage'),'error':j.get('error') or (None if ch else j)}
+    with open(run/'calls.jsonl','a') as f:f.write(json.dumps(rec)+'\n')
+
 async def episode(client,sem,args,key,task,level):
     base,model=MODELS[key];d=OUT/'tasks'/task['task_id'];run=OUT/'runs'/args.run/task['task_id']/f'{level}_{key}';run.mkdir(parents=True,exist_ok=True)
     allowed=task['modules'] if level in('L1','L2') else list(ops.OPS)
@@ -132,7 +147,10 @@ async def episode(client,sem,args,key,task,level):
             reply=None;errors=[]
             for attempt in range(3):
                 try:
-                    resp=await client.post(f'{base}/chat/completions',json=body,timeout=900,headers=gbpaths.api_headers(_CFG.get(key)));resp.raise_for_status()
+                    t0=time.time()
+                    resp=await client.post(f'{base}/chat/completions',json=body,timeout=900,headers=gbpaths.api_headers(_CFG.get(key)))
+                    if args.log_replies:log_call(run,r,calls,attempt,body,resp,time.time()-t0)
+                    resp.raise_for_status()
                     ch=resp.json()['choices'][0];content=ch['message']['content']
                     try:reply=json.loads(content);break
                     except (json.JSONDecodeError,TypeError):errors.append({'finish_reason':ch.get('finish_reason'),'tail':str(content)[-200:]})
@@ -192,6 +210,7 @@ def main():
     ap.add_argument('--forced',action='store_true',help='use every round (done ignored)')
     ap.add_argument('--limit',type=int,help='first N tasks only (smoke test)')
     ap.add_argument('--max-tokens',type=int,default=16000,help='per-call output budget (reasoning + answer)')
+    ap.add_argument('--log-replies',action='store_true',help='save every model call in full (reply, reasoning, usage, latency) to <episode>/calls.jsonl')
     args=ap.parse_args()
     if OUT.name.startswith(('bench_b1_','bench_b2_')):   # new benchmark sets: only frozen, unchanged tasks (freeze_b1.py --approved)
         import hashlib
