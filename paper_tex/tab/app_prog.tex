@@ -1,0 +1,35 @@
+\begin{table*}[t]
+  \centering
+  \footnotesize
+  \caption{\textbf{Program channel per application}: pass rate (\%), seeds as in Tab.~\ref{tab:main}. dt: darktable, RT: RawTherapee, Ink: Inkscape.}
+  \label{tab:app-prog}
+  \setlength{\tabcolsep}{3.4pt}
+  \begin{tabular}{@{}l ccccc @{\hspace{7pt}} ccccc @{\hspace{7pt}} ccccc@{}}
+    \toprule
+    & \multicolumn{5}{c}{L1} & \multicolumn{5}{c}{L2} & \multicolumn{5}{c}{L3} \\
+    \cmidrule(r{7pt}){2-6}\cmidrule(r{7pt}){7-11}\cmidrule{12-16}
+    Model & dt & RT & GIMP & Ink & Blender & dt & RT & GIMP & Ink & Blender & dt & RT & GIMP & Ink & Blender \\
+    \midrule
+    Qwen3.5-0.8B           & 82 & 86 & 85 & 92 & 87 & 0 & 2 & 2 & 3 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    Qwen3.5-2B             & 92 & 93 & 90 & 91 & 94 & 1 & 1 & 0 & 2 & 1 & 0 & 0 & 0 & 1 & 0 \\
+    Qwen3.5-4B             & 100 & 100 & 99 & 99 & 99 & 2 & 4 & 5 & 9 & 2 & 0 & 0 & 0 & 2 & 0 \\
+    Qwen3.5-9B             & 100 & 100 & 100 & 100 & 100 & 2 & 5 & 4 & 14 & 1 & 0 & 0 & 0 & 4 & 0 \\
+    Qwen3.5-27B            & 100 & 100 & 100 & 100 & 100 & 4 & 6 & 9 & 16 & 3 & 0 & 0 & 0 & 3 & 0 \\
+    Qwen3.5-35B-A3B        & 100 & 100 & 100 & 100 & 100 & 2 & 5 & 6 & 16 & 2 & 0 & 0 & 0 & 4 & 0 \\
+    Qwen3.5-122B-A10B      & 100 & 100 & 100 & 100 & 100 & 3 & 3 & 8 & 13 & 4 & 0 & 0 & 0 & 7 & 0 \\
+    Qwen3.5-397B-A17B      & 100 & 100 & 100 & 100 & 100 & 5 & 12 & 6 & 24 & 5 & 0 & 0 & 0 & 10 & 1 \\
+    \midrule
+    GLM-5.3-Flash          & 100 & 100 & 100 & 100 & 100 & 0 & 5 & 1 & 9 & 6 & 0 & 0 & 0 & 2 & 0 \\
+    \midrule
+    DeepSeek-V4.1-Flash    & 100 & 100 & 100 & 100 & 100 & 2 & 4 & 4 & 14 & 3 & 0 & 1 & 0 & 11 & 1 \\
+    \midrule
+    Step-3.7-Flash         & 100 & 100 & 100 & 100 & 100 & 3 & 12 & 7 & 14 & 1 & 1 & 0 & 0 & 2 & 0 \\
+    \midrule
+    Nemotron-3.5-Super-VL  & 100 & 100 & 100 & 100 & 100 & 4 & 4 & 9 & 12 & 5 & 0 & 0 & 0 & 2 & 1 \\
+    \midrule
+    Claude Opus 5.5        & 100 & 100 & 100 & 100 & 100 & 4 & 11 & 10 & 34 & 8 & 1 & 2 & 0 & 28 & 3 \\
+    \midrule
+    GPT-6.1                & 100 & 100 & 100 & 100 & 100 & 4 & 9 & 11 & 65 & 6 & 5 & 2 & 3 & 52 & 5 \\
+    \bottomrule
+  \end{tabular}
+\end{table*}

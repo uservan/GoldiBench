@@ -5,3 +5,4 @@ data/
 configs/models.yaml
 *.log
 .hand_edited
+paper_out/

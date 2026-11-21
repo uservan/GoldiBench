@@ -2,7 +2,8 @@
 column with one rule between families; pass rates shaded on a blue scale, negative closeness in red). Reads
 tab/main_prog.tex and tab/main_gui.tex (written by main_tables.py) and writes tab/main.tex, keeping its caption."""
 import os,re
-PAPER=os.path.join(os.path.dirname(os.path.abspath(__file__)),'..','..','6af23dcfd2c227248fab917b')
+PAPER=os.environ.get('GOLDIBENCH_PAPER', os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'paper_out'))
+for _d in ('tab', 'fig'): os.makedirs(os.path.join(PAPER, _d), exist_ok=True)
 # (family, [(label in the table, row name in main_prog / main_gui)])
 FAM=[('Qwen3.5',[(s,f'Qwen3.5-{s}') for s in ('0.8B','2B','4B','9B','27B','35B-A3B','122B-A10B','397B-A17B')]),
      ('GLM-5.3',[('Flash','GLM-5.3-Flash')]),('DeepSeek-V4.1',[('Flash','DeepSeek-V4.1-Flash')]),('Step-3.7',[('Flash','Step-3.7-Flash')]),
@@ -40,8 +41,9 @@ HEAD=r"""  \label{tab:main}
     \cmidrule(r{6pt}){3-5}\cmidrule(r{14pt}){6-8}\cmidrule(r{6pt}){9-11}\cmidrule{12-14}
     Family & Model & L1 & L2 & L3 & L1 & L2 & L3 & L1 & L2 & L3 & L1 & L2 & L3 \\"""
 def main():
-    old=open(f'{PAPER}/tab/main.tex').read()
-    cap=old[old.index(r'  \caption{'):old.index(r'  \label{tab:main}')]
+    old=open(f'{PAPER}/tab/main.tex').read() if os.path.exists(f'{PAPER}/tab/main.tex') else ''
+    cap=(old[old.index(r'  \caption{'):old.index(r'  \label{tab:main}')] if r'  \label{tab:main}' in old else
+         '  \\caption{Main results: pass rate (\\%) and mean closeness per level, program and GUI channel.}\n')   # no earlier table: default caption
     P=rows(f'{PAPER}/tab/main_prog.tex');G=rows(f'{PAPER}/tab/main_gui.tex');dash=['--']*6
     L=[r'\begin{table*}[t]',r'  \centering',cap.rstrip('\n'),HEAD]
     for fam,ms in FAM:

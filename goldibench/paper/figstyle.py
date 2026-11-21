@@ -14,7 +14,8 @@ from matplotlib.patches import FancyBboxPatch,Circle
 from PIL import Image
 
 HERE=os.path.dirname(os.path.abspath(__file__));ROOT=os.path.join(HERE,'..','..')
-PAPER=os.path.join(ROOT,'6af23dcfd2c227248fab917b')
+PAPER=os.environ.get('GOLDIBENCH_PAPER', os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'paper_out'))
+for _d in ('tab', 'fig'): os.makedirs(os.path.join(PAPER, _d), exist_ok=True)
 D=str(gbpaths.DATA)
 APPS=('darktable','rawtherapee','gimp','inkscape','blender')
 APP_NAMES={'darktable':'darktable','rawtherapee':'RawTherapee','gimp':'GIMP','inkscape':'Inkscape','blender':'Blender'}

@@ -108,16 +108,23 @@ GOLDIBENCH_DATA=./data MODEL=mymodel GUI_MODEL=myagent tests/smoke.sh   # 5 apps
 ## 6. Reproduce the paper's tables and figures
 
 All raw episodes of the paper (every model output, program, GUI action, screenshot, score, and the cost ledger of the
-closed models) are in [VanWang/GoldiBench-logs](https://huggingface.co/datasets/VanWang/GoldiBench-logs).
+closed models) are in [VanWang/GoldiBench-logs](https://huggingface.co/datasets/VanWang/GoldiBench-logs). Restore them
+into the original run layout and run the paper scripts:
+```bash
+bash scripts/download_data.sh                      # the benchmark (GOLDIBENCH_DATA)
+bash scripts/restore_runs.sh                       # every run of the paper from the logs dataset (raw records only)
+GOLDIBENCH_PAPER=./paper_out python goldibench/paper/main_tables.py   # -> paper_out/tab/main_prog.tex, main_gui.tex, ...
+```
+Checked before release: the regenerated main tables are identical to the paper's (program 42/42, GUI 75/75 entries,
+per-application tables 210/210 and 375/375; the LaTeX rows match line by line). Other scripts: `main_ci.py` (95% CIs),
+`ch5_numbers.py` (Sec. 5), `threshold_sweep.py`, `fig_*.py` (figures).
+
 The logs are organised as `<channel>/<app>/<model>/<condition>/seed<k>/`, so download only what you need:
 ```bash
 scripts/download_logs.sh --tables-only                                    # all tables, runs.csv, costs (small)
 scripts/download_logs.sh --channel gui --app gimp --model gpt61gui        # one model on one app, with screenshots
-scripts/download_logs.sh --channel program --condition main --seed 0 --tables-only
 ```
 or `load_dataset("VanWang/GoldiBench-logs", "episodes_paper")` (configs listed on the dataset page).
-`goldibench/paper/*.py` builds the tables and figures from them (`main_tables.py` → Tab. main, `main_ci.py` → 95% CIs,
-`ch5_numbers.py` → Sec. 5, `fig_*.py` → figures).
 
 ## 7. Building the benchmark (optional)
 

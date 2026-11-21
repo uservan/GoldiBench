@@ -92,7 +92,9 @@ def table(rows,cells):
             if len(v)==len(APPS):res[row[1],lv]=tuple(st.mean(x[i] for x in v) for i in range(3))
     return res
 
-PAPER=__import__('os').environ.get('GOLDIBENCH_PAPER', 'paper_tex')
+import os
+PAPER=os.environ.get('GOLDIBENCH_PAPER', os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'paper_out'))
+for _d in ('tab', 'fig'): os.makedirs(os.path.join(PAPER, _d), exist_ok=True)
 APPN={'darktable':'dt','rawtherapee':'RT','gimp':'GIMP','inkscape':'Ink','blender':'Blender'}
 
 def num(v,d):

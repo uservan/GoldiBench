@@ -1,0 +1,51 @@
+\begin{table}[t]
+  \centering
+  \caption{\textbf{GUI channel} (100 steps). As Tab.~\ref{tab:main-prog} on the GUI tasks (53--100 per application and level). GUI agents and Qwen3.5: mean of 3 seeds; GLM-5.3, DeepSeek-V4.1, Step-3.7, Nemotron-3.5 (OSWorld screenshot-to-pyautogui agent) and closed models: one run. Episodes in which the agent left the application hung count as failures.}
+  \label{tab:main-gui}
+  \setlength{\tabcolsep}{4pt}
+  \resizebox{\linewidth}{!}{%
+  \begin{tabular}{@{}l ccc @{\hspace{6pt}} ccc@{}}
+    \toprule
+    & \multicolumn{3}{c}{pass (\%)} & \multicolumn{3}{c}{closeness} \\
+    \cmidrule(r{6pt}){2-4}\cmidrule{5-7}
+    Model & L1 & L2 & L3 & L1 & L2 & L3 \\
+    \midrule
+    Qwen3.5-0.8B           & 0.4 & 0.0 & 0.0 & 0.01 & 0.00 & 0.00 \\
+    Qwen3.5-2B             & 0.6 & 0.0 & 0.0 & $-$0.09 & $-$0.01 & $-$0.02 \\
+    Qwen3.5-4B             & 4.1 & 0.7 & 0.0 & $-$0.02 & $-$0.01 & $-$0.17 \\
+    Qwen3.5-9B             & 10.2 & 0.5 & 0.0 & 0.01 & $-$0.03 & $-$0.11 \\
+    Qwen3.5-27B            & 16.3 & 0.7 & 0.2 & 0.11 & $-$0.05 & $-$0.18 \\
+    Qwen3.5-35B-A3B        & 16.0 & 0.4 & 0.0 & 0.13 & $-$0.10 & $-$0.20 \\
+    Qwen3.5-122B-A10B      & 15.3 & 0.9 & 0.0 & 0.12 & $-$0.04 & $-$0.13 \\
+    Qwen3.5-397B-A17B      & 14.2 & 1.0 & 0.1 & 0.12 & $-$0.07 & $-$0.26 \\
+    \midrule
+    GLM-5.3-Flash          & 60.1 & 4.7 & 1.6 & 0.60 & 0.07 & $-$0.03 \\
+    \midrule
+    DeepSeek-V4.1-Flash    & 8.1 & 1.2 & 0.4 & $-$0.02 & $-$0.09 & $-$0.07 \\
+    \midrule
+    Step-3.7-Flash         & 0.0 & 0.0 & 0.0 & $-$0.04 & $-$0.02 & $-$0.02 \\
+    \midrule
+    Nemotron-3.5-Super-VL  & 0.0 & 0.0 & 0.0 & 0.00 & $-$0.01 & $-$0.02 \\
+    \midrule
+    UI-TARS-2B             & 0.5 & 0.6 & 0.0 & $-$0.03 & $-$0.03 & $-$0.10 \\
+    UI-TARS-7B             & 0.4 & 0.8 & 0.0 & $-$0.05 & $-$0.03 & $-$0.08 \\
+    UI-TARS-72B            & 6.6 & 0.9 & 0.0 & 0.03 & $-$0.04 & $-$0.16 \\
+    UI-TARS-1.5-7B         & 9.8 & 1.0 & 0.0 & 0.05 & $-$0.05 & $-$0.24 \\
+    \midrule
+    OpenCUA-7B             & 12.4 & 0.4 & 0.0 & 0.03 & $-$0.17 & $-$0.37 \\
+    OpenCUA-32B            & 14.9 & 0.3 & 0.0 & 0.09 & $-$0.11 & $-$0.40 \\
+    OpenCUA-72B            & 16.2 & 0.9 & 0.2 & 0.10 & $-$0.07 & $-$0.19 \\
+    \midrule
+    GUI-Owl-1.5-32B        & 12.3 & 0.7 & 0.0 & 0.08 & $-$0.10 & $-$0.39 \\
+    \midrule
+    EvoCUA-32B             & 17.6 & 0.8 & 0.0 & 0.18 & $-$0.05 & $-$0.14 \\
+    \midrule
+    Holo4-35B              & 36.7 & 1.8 & 0.2 & 0.38 & $-$0.05 & $-$0.22 \\
+    Holo4-27B              & 52.6 & 2.3 & 2.0 & 0.56 & 0.06 & $-$0.04 \\
+    \midrule
+    Claude Opus 5.5        & \textbf{98.8} & 13.7 & 8.6 & \textbf{0.98} & 0.44 & 0.31 \\
+    \midrule
+    GPT-6.1                & 89.5 & \textbf{32.7} & \textbf{17.8} & 0.87 & \textbf{0.55} & \textbf{0.41} \\
+    \bottomrule
+  \end{tabular}}
+\end{table}

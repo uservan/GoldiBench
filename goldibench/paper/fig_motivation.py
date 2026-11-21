@@ -139,5 +139,5 @@ def main(out):
     print('  c',[[round(v) for v in s] for s in panel_c()]);print('  d',[[round(v) for v in s] for s in panel_d()])
 
 if __name__=='__main__':
-    ap=argparse.ArgumentParser();ap.add_argument('--out',default=os.path.join(ROOT,'6af23dcfd2c227248fab917b','fig','motivation.pdf'))
+    ap=argparse.ArgumentParser();ap.add_argument('--out',default=os.path.join(os.environ.get('GOLDIBENCH_PAPER', os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'paper_out')),'fig','motivation.pdf'))
     main(ap.parse_args().out)
