@@ -93,3 +93,38 @@ No harness errors in 531 episodes / 8,936 calls (no failed render, model call, G
 Same failure modes as the paper: L1 passes and L2 / L3 mostly fail; on `tdiff` / `table` the reasoning often runs into
 the 32k budget (step37 tdiff "no valid reply" 13 / 15 here, 12 / 15 in the paper); GUI agents mostly stop at 100 steps.
 Bedrock cost of the rerun: USD 23.09. Single episodes differ from the paper's (sampling is not bit-reproducible).
+
+## Final commit on a new host (2026-11-22)
+
+`git clone` of master `11817cc` (after the `uv.lock` refresh: protobuf 5.29.6), same clean-room steps as above, Holo4-35B-A3B
+weights from Hugging Face, `LOG_REPLIES=1 tests/smoke.sh`: SMOKE OK, no harness errors, every episode has its `calls.jsonl`.
+L1 passes on all five apps (closeness 1.00); L2 darktable 0.20, RawTherapee pass 0.82, GIMP 0.18, Inkscape 0.23,
+Blender −1.05; GUI darktable L1 15 steps, closeness 0.05.
+Found on the way: `setup_apps.sh` / `setup_darktable.sh` did not stop on a failed download and then recorded the sha256 of
+only the files that arrived (fixed). inkscape.org served only the first 19.9 MB of the AppImage that day; the copy used
+has the sha256 of the original download.
+
+## The parts no earlier test covered (2026-11-22)
+
+Same clean install, public data only.
+
+- **GUI channel, measured TARGET − START** (run `b1g100_closed_tdiff` of the paper; here Holo4-35B-A3B, darktable and
+  GIMP task b000, L2, 10 steps, `GUI_KNOWLEDGE=table_state_diff`): runs end to end, no harness error; the statistics reach
+  the agent (its first reasoning quotes "TARGET minus START: L* +7.7, …"; prompt 7,826 tokens vs 6,695 without).
+- **Building the benchmark** (`gen_b1.py` → `verify_b1.py` → `report_b1.py` → `freeze_b1.py`, darktable). Generators stood
+  in for by Qwen3.5-9B under both served names (pipeline test, not generation quality): candidates are proposed, rendered
+  and rejected by the gates (C3, C4, V-2, V-3); none passed with the 9B model, as expected. `verify_b1.py` on the released
+  darktable set: all 100 tasks re-checked, 0 with problems (`VERIFY_WORKERS=16`, ~15 min).
+  `freeze_b1.py --per-k 12` (check only): all checks pass, split dev 20 / test 80 as released. The released sets have
+  uneven step-count buckets (frozen after the human review), so the default `--per-k 20` reports darktable k=4 19, k=5 12.
+  Fixed on the way: `gen_b1.py` needed the full PSBench download (`<id>/<id>.json`); the dataset ships only the start
+  images, so every photo-app candidate failed (now falls back to `<id>_start.*`). `verify_b1.py` resolved the released
+  sets' dataset-relative `source_path` against the working directory (now against `GOLDIBENCH_DATA`). A reply without
+  content (reasoning used the budget) now says so instead of a `TypeError`.
+- **PlayRaw** (`DT_LIBRARY=playraw`, run `b2t32`): the released set could not be re-rendered (bundles, raw files and XMP
+  sidecars were missing; `source_path` was a placeholder) and `score.py` crashed on the 6 tasks without images. The
+  dataset now has `bench_b2_darktable/{bundles,raw,xmp}` for the 154 licensed tasks; `source_path` points at the bundle,
+  `FROZEN` regenerated (programs unchanged); `run_agent.py` / `score.py` skip the 6 tasks without images. Fresh
+  `download_data.sh --playraw`: sha256 OK; replaying the hidden programs from the released bundles reproduces TARGET
+  (max ΔE 0.0002 on the sampled tasks); `score.py` validation of all 154 tasks: oracle max ΔE 0.21, ×0.9 / ×1.1 pass,
+  identity / ×0.5 / over fail on every task; Qwen3.5-9B run (2 tasks, L1 + L2) and scoring OK (L1 pass, L2 fail).

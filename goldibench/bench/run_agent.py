@@ -190,6 +190,9 @@ async def episode(client,sem,args,key,task,level):
 
 async def main_async(args):
     tasks=[json.loads(l) for l in gbpaths.open_tasks(OUT/'tasks.jsonl')]
+    # released PlayRaw set: 6 tasks whose forum thread states no licence ship without images or source (IMAGES_NOT_INCLUDED.txt)
+    nosrc=[t['task_id'] for t in tasks if not t.get('source_path') or not (OUT/'tasks'/t['task_id']/'start.png').exists()]
+    if nosrc:print(f'skipping {len(nosrc)} tasks released without images / source: {nosrc}',flush=True);tasks=[t for t in tasks if t['task_id'] not in nosrc]
     if args.limit:tasks=tasks[:args.limit]   # smoke tests only
     if args.tasks_file:keep=open(args.tasks_file).read().split();tasks=[t for t in tasks if t['task_id'] in keep]
     jobs=[(k,t,l) for k in args.models for t in tasks for l in args.levels if not (OUT/'runs'/args.run/t['task_id']/f'{l}_{k}'/'episode.json').exists()]

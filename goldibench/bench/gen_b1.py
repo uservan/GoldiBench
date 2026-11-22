@@ -111,7 +111,9 @@ def ask(gen,msgs,k,rng,allowed=None):
     body={'model':model,'temperature':0.8,'top_p':0.95,'seed':rng.randrange(10**6),'max_tokens':12000,'messages':msgs,
           'response_format':{'type':'json_schema','json_schema':{'name':'plan','schema':interval_schema(k,allowed)}}}
     r=httpx.post(f'{base}/chat/completions',json=body,timeout=1200);r.raise_for_status()
-    c=r.json()['choices'][0]['message']['content'];return json.loads(c),c
+    ch=r.json()['choices'][0];c=ch['message']['content']
+    if c is None:raise ValueError(f"no reply content (finish_reason {ch.get('finish_reason')}: reasoning used the token budget)")
+    return json.loads(c),c
 
 def feedback(why,checks,prog):
     """Plain-language measurement for a revision, or None when the failure is not one a revision addresses."""
@@ -343,8 +345,12 @@ def sources():
 
 def resolve(src_id,src):
     if src is not None:return src
-    ps=src_id.split(':')[1];meta=json.loads((mp.DATA/'sources/PSBench-data'/ps/f'{ps}.json').read_text())
-    return mp.DATA/'sources/PSBench-data'/ps/meta['resources']['input_file']
+    ps=src_id.split(':')[1];d=mp.DATA/'sources/PSBench-data'/ps
+    if (d/f'{ps}.json').exists():   # full PSBench download: the task's metadata names the input file
+        return d/json.loads((d/f'{ps}.json').read_text())['resources']['input_file']
+    starts=sorted(d.glob(f'{ps}_start.*'))   # released dataset: only the start image (.jpg / .jpeg / .png)
+    if len(starts)!=1:raise FileNotFoundError(f'{d}: expected one {ps}_start.* or {ps}.json, found {len(starts)}')
+    return starts[0]
 
 def main():
     ap=argparse.ArgumentParser();ap.add_argument('--n',type=int,default=10);ap.add_argument('--workers',type=int,default=6)

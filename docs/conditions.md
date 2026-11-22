@@ -19,10 +19,12 @@ Common settings of the program channel: `--rounds 4 --max-tokens 32000`, vLLM se
 | `b1fb` | Sec. 5, forced rounds + numeric distance feedback | `... --levels L2 L3 --forced --feedback numeric --tasks-file ... --run b1fb` |
 | `b1g100_s0..s2` | Tab. main, GUI channel (3 seeds) | `run_gui_osworld.py --models M --levels L1 L2 L3 --run b1g100_s<k> --seed <k> --max-steps 100` |
 | `b1g100_closed` | Tab. main, GUI channel, closed models | `run_gui_osworld.py --models opus55gui gpt61gui --run b1g100_closed --max-steps 100` |
+| `b1g100_closed_tdiff` | Sec. 5, measured TARGET−START difference, GUI channel (closed models) | `GUI_KNOWLEDGE=table_state_diff run_gui_osworld.py --models opus55gui gpt61gui --levels L2 --tasks <the tasks of data/minimanual/subsets/<app>.txt that have a GUI version> --run b1g100_closed_tdiff --max-steps 100` (125 tasks over the five apps) |
+| `b2t32` | Sec. 4, PlayRaw real edits (darktable) | `DT_LIBRARY=playraw BENCH_APP=darktable BENCH_SET=bench_b2_darktable run_agent.py --models M --levels L1 L2 L3 --run b2t32 --rounds 4 --max-tokens 32000`; score with the same env and `score.py --run b2t32`. Needs `scripts/download_data.sh --playraw` (154 licensed tasks with raw files and XMP sidecars; the 6 without a stated licence are skipped) |
 
 Score: `score.py --run <run>` (program) and `score_gui.py --run <run>` (GUI).
 Other run names in the logs (`b1smoke*`, `bdk_*`, `_closed_seed1_unused`, `b1tdiff_gpt*`, `b1g_s*` (40-step GUI runs),
-`b1g100_closed1a`, `b1g100_closed_tdiff`, backups) are smoke tests, pilots, controls and superseded runs; the logs dataset
+`b1g100_closed1a`, backups) are smoke tests, pilots, controls and superseded runs; the logs dataset
 marks every run with `in_paper` and `paper_use`. The exact shell pipelines that launched every run (including seeds and
 model groups) are kept verbatim in the raw snapshot (`VanWang/ves-raw-snapshot-20261120`, `snapshot_v2/code__visual-effect-skills.tar.zst`,
 `scripts/pipelines/`).

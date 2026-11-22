@@ -9,7 +9,8 @@ V=5.6.2 URL=https://github.com/darktable-org/darktable/releases/download/release
 CACHE=$DATA/apps/darktable-$V APPS=$LOCAL/apps
 mkdir -p "$CACHE" "$APPS"
 for f in Darktable-$V-x86_64.AppImage darktable-$V.tar.xz; do
-  [ -f "$CACHE/$f" ] || { curl -fL --retry 3 -o "$CACHE/$f.part" "$URL/$f" && mv "$CACHE/$f.part" "$CACHE/$f"; }
+  [ -f "$CACHE/$f" ] || { curl -fL --retry 5 --retry-all-errors -o "$CACHE/$f.part" "$URL/$f" && mv "$CACHE/$f.part" "$CACHE/$f"; } \
+    || { echo "download failed: $URL/$f" >&2; rm -f "$CACHE/$f.part"; exit 1; }
 done
 (cd "$CACHE" && { [ -f SHA256SUMS ] || sha256sum Darktable-$V-x86_64.AppImage darktable-$V.tar.xz > SHA256SUMS; } && sha256sum -c --quiet SHA256SUMS)
 if [ ! -x "$APPS/darktable-$V/squashfs-root/usr/bin/darktable-cli" ]; then

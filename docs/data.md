@@ -53,7 +53,11 @@ bench_b1_<app>/dropped_*/, aborted_attempts/   candidates removed by the checks 
 bench_b2_darktable/                the 160 PlayRaw real edits (Sec. 4, PlayRaw row of Tab. bench-stats): tasks.jsonl, tasks/,
                                    drops.jsonl, validation.json; CREDITS.csv gives per task the forum thread, the author of
                                    the edit and its licence. Not CC-BY: each task keeps the licence of its thread; 6 tasks
-                                   whose thread states no licence ship without images (IMAGES_NOT_INCLUDED.txt)
+                                   whose thread states no licence ship without images (IMAGES_NOT_INCLUDED.txt;
+                                   source_path null; run_agent.py / score.py skip them).
+                                   bundles/<task_id>.bundle.json (the task's source_path: the user's raw file, XMP sidecar
+                                   and module parameters) and raw/<thread>/, xmp/<thread>/ (added 2026-11-22) make the
+                                   154 licensed tasks re-renderable (DT_LIBRARY=playraw, see conditions.md, run b2t32)
 ```
 
 ## 2. GoldiBench-logs (the paper's experiments, for analysis and rebuttal)

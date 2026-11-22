@@ -11,7 +11,11 @@ user's edit with every settable field at neutral.
 """
 import json,re,subprocess,tempfile
 from pathlib import Path
-import dt_params
+import dt_params,gbpaths
+
+def _file(p):
+    """A bundle's raw / xmp path: relative to the dataset (released bundles: bench_b2_darktable/raw|xmp/...) or absolute."""
+    p=Path(p);return p if p.is_absolute() else gbpaths.DATA/p
 
 LI=re.compile(r'<rdf:li\b[^>]*?darktable:operation="[^"]*"[^>]*?/>',re.S)
 
@@ -36,7 +40,7 @@ def settable(op,values,ops,neutral):
 
 def sidecar(bundle,steps,ops,neutral):
     """The user's sidecar with the program applied (steps: [(module, {field: value})])."""
-    text=Path(bundle['xmp']).read_text(errors='ignore');a,b,es=history(text);prog=dict(steps)
+    text=_file(bundle['xmp']).read_text(errors='ignore');a,b,es=history(text);prog=dict(steps)
     edits=[]   # (entry index, new li text)
     for op,e in bundle['edit'].items():
         vals={**e['params'],**settable(op,prog.get(op,{}),ops,neutral)}
@@ -62,7 +66,7 @@ def render(bundle_path,steps,out,size,ops,neutral):
     with tempfile.TemporaryDirectory() as t:
         side=Path(t)/'s.xmp';side.write_text(sidecar(bundle,steps,ops,neutral))
         dims=['--width',str(size),'--height',str(size)] if size else []
-        r=subprocess.run([str(dt_params.DT),bundle['raw'],str(side),str(out),*dims,'--core','--configdir',str(Path(t)/'conf'),
+        r=subprocess.run([str(dt_params.DT),str(_file(bundle['raw'])),str(side),str(out),*dims,'--core','--configdir',str(Path(t)/'conf'),
                           '--library',':memory:'],capture_output=True,text=True,timeout=900)
         if r.returncode or not Path(out).exists():raise RuntimeError((r.stdout+r.stderr)[-800:])
     return out

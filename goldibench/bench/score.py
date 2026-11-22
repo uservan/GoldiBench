@@ -63,6 +63,9 @@ def main():
     runs=OUT/'tasks' if args.run=='v1' else OUT/'runs'/args.run
     vf=OUT/'validation.json';val=json.loads(vf.read_text()) if vf.exists() else {}
     tasks=[json.loads(l) for l in gbpaths.open_tasks(OUT/'tasks.jsonl')];rows=[];jobs=[]
+    # released PlayRaw set: 6 tasks whose forum thread states no licence ship without images or source (IMAGES_NOT_INCLUDED.txt)
+    nosrc=[t['task_id'] for t in tasks if not t.get('source_path') or not (OUT/'tasks'/t['task_id']/'start.png').exists()]
+    if nosrc:print(f'skipping {len(nosrc)} tasks released without images / source: {nosrc}',flush=True);tasks=[t for t in tasks if t['task_id'] not in nosrc]
     # B-1 sets were checked by verify_b1.py (a superset of this validation) before freezing; skip the 5 extra renders per task
     if OUT.name.startswith('bench_b1_'):args.skip_validation=True
     # final re-renders in parallel; one already newer than its episode is reused (rescoring after more models are added)

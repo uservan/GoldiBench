@@ -12,7 +12,8 @@ mkdir -p "$APPS"
 fetch(){
   local cache=$1;shift;mkdir -p "$cache"
   for u in "$@"; do local f=$cache/$(basename "$u")
-    [ -f "$f" ] || { curl -fL --retry 3 -o "$f.part" "$u" && mv "$f.part" "$f"; }
+    [ -f "$f" ] || { curl -fL --retry 5 --retry-all-errors -o "$f.part" "$u" && mv "$f.part" "$f"; } \
+      || { echo "download failed: $u" >&2; rm -f "$f.part"; return 1; }
   done
   (cd "$cache" && { [ -f SHA256SUMS ] || sha256sum $(for u in "$@"; do basename "$u"; done) > SHA256SUMS; } && sha256sum -c --quiet SHA256SUMS)
 }

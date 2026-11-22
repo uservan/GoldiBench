@@ -108,6 +108,9 @@ def verify(t,d,work):
 
 def main():
     ts=[json.loads(p.read_text()) for p in sorted((mp.OUT/'tasks').glob('*/program.json'))]
+    import gbpaths   # released sets store dataset-relative source paths (sources/..., assets/...): resolve under GOLDIBENCH_DATA
+    for t in ts:
+        if t.get('source_path') and not Path(t['source_path']).is_absolute():t['source_path']=str(gbpaths.DATA/t['source_path'])
     with tempfile.TemporaryDirectory(dir=os.environ.get('VE_TMP')) as w:
         def one(t):
             d=Path(w)/t['task_id'];d.mkdir()
