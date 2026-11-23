@@ -6,6 +6,7 @@ set -euo pipefail
 DATA=${VE_DATA:-${GOLDIBENCH_DATA:-$(cd "$(dirname "$0")/.." && pwd)/data}}
 LOCAL=${VE_LOCAL:-$HOME/.cache/goldibench}
 APPS=$LOCAL/apps
+ROOT=$(cd "$(dirname "$0")/.." && pwd)
 mkdir -p "$APPS"
 
 # fetch <cache dir> <url>...: download once, record sha256 on first download, verify every time
@@ -16,6 +17,9 @@ fetch(){
       || { echo "download failed: $u" >&2; rm -f "$f.part"; return 1; }
   done
   (cd "$cache" && { [ -f SHA256SUMS ] || sha256sum $(for u in "$@"; do basename "$u"; done) > SHA256SUMS; } && sha256sum -c --quiet SHA256SUMS)
+  # the paper's binaries: every file must match env/apps.sha256 (a truncated or changed download fails here)
+  (cd "$(dirname "$cache")" && grep "  $(basename "$cache")/" "$ROOT/env/apps.sha256" | sha256sum -c --quiet -) \
+    || { echo "sha256 differs from env/apps.sha256 in $cache: delete the file(s) and rerun, or place the paper's copy there" >&2; return 1; }
 }
 # extract <AppImage> <dest>
 extract(){
@@ -39,6 +43,8 @@ GR=$APPS/gimp-$G/squashfs-root
   tar -xJf "$DATA/apps/gimp-$G/gimp-$G.tar.xz" -C "$APPS/gimp-src" --strip-components=1; }
 
 I=1.4.4
+# inkscape.org has at times served only the first 19,922,944 bytes of the AppImage (2026-11-22 / 11-23); the download then
+# fails. Put a copy with the sha256 of env/apps.sha256 into $DATA/apps/inkscape-$I/ and rerun.
 fetch "$DATA/apps/inkscape-$I" https://inkscape.org/gallery/item/59506/Inkscape-$I.AppImage https://inkscape.org/gallery/item/59505/inkscape-$I.tar.xz
 extract "$DATA/apps/inkscape-$I/Inkscape-$I.AppImage" "$APPS/inkscape-$I"
 

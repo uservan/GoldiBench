@@ -5,6 +5,7 @@
 set -euo pipefail
 DATA=${VE_DATA:-${GOLDIBENCH_DATA:-$(cd "$(dirname "$0")/.." && pwd)/data}}
 LOCAL=${VE_LOCAL:-$HOME/.cache/goldibench}
+ROOT=$(cd "$(dirname "$0")/.." && pwd)
 V=5.6.2 URL=https://github.com/darktable-org/darktable/releases/download/release-5.6.2
 CACHE=$DATA/apps/darktable-$V APPS=$LOCAL/apps
 mkdir -p "$CACHE" "$APPS"
@@ -13,6 +14,8 @@ for f in Darktable-$V-x86_64.AppImage darktable-$V.tar.xz; do
     || { echo "download failed: $URL/$f" >&2; rm -f "$CACHE/$f.part"; exit 1; }
 done
 (cd "$CACHE" && { [ -f SHA256SUMS ] || sha256sum Darktable-$V-x86_64.AppImage darktable-$V.tar.xz > SHA256SUMS; } && sha256sum -c --quiet SHA256SUMS)
+(cd "$DATA/apps" && grep "  darktable-$V/" "$ROOT/env/apps.sha256" | sha256sum -c --quiet -) \
+  || { echo "sha256 differs from env/apps.sha256 in $CACHE: delete the file(s) and rerun" >&2; exit 1; }
 if [ ! -x "$APPS/darktable-$V/squashfs-root/usr/bin/darktable-cli" ]; then
   rm -rf "$APPS/darktable-$V"; mkdir -p "$APPS/darktable-$V"; cp "$CACHE/Darktable-$V-x86_64.AppImage" "$APPS/darktable-$V/"
   (cd "$APPS/darktable-$V" && chmod +x Darktable-$V-x86_64.AppImage && ./Darktable-$V-x86_64.AppImage --appimage-extract > /dev/null)

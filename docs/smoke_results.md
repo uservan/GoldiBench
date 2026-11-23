@@ -128,3 +128,25 @@ Same clean install, public data only.
   `download_data.sh --playraw`: sha256 OK; replaying the hidden programs from the released bundles reproduces TARGET
   (max ΔE 0.0002 on the sampled tasks); `score.py` validation of all 154 tasks: oracle max ΔE 0.21, ×0.9 / ×1.1 pass,
   identity / ×0.5 / over fail on every task; Qwen3.5-9B run (2 tasks, L1 + L2) and scoring OK (L1 pass, L2 fail).
+
+## Clean-room test of master a99f386 (2026-11-23, fresh host, 8x H200)
+
+Fresh `git clone`, `uv sync --extra gui --extra paper --extra closed`, `download_data.sh --provenance --playraw`, the
+setup scripts, Holo4-35B-A3B-FP8 from Hugging Face served by `scripts/serve_vllm.sh` with the flags of `docs/conditions.md`.
+
+- `LOG_REPLIES=1 tests/smoke.sh`, GUI channel on all five apps: **SMOKE OK**, no harness errors, every episode has its
+  `calls.jsonl`. Program L1 passes on all five apps (closeness 1.00); L2 darktable 0.20, RawTherapee 0.42, GIMP 0.12,
+  Inkscape 0.23, Blender −1.11. GUI L1 (15 steps): GIMP pass (1.00), darktable −0.85, RawTherapee 0.26, Inkscape and
+  Blender 0.00.
+- `tests/interventions.sh` on all five apps, all eight condition flags: **INTERVENTIONS OK** (the manual condition calls
+  read_skill / load_topic on every app; forced and forced + feedback use both rounds).
+- Paper reproduction (`restore_runs.sh --supporting`, `score_report.py`, every script of `docs/paper.md`):
+  `main_prog.tex`, `main_gui.tex`, `app_prog.tex`, `app_gui.tex` byte-identical to `paper_tex/tab/`; `main_tables.json`,
+  `main_ci.json`, `threshold_sweep.json`, `interv12.json`, `sec43_data.md` identical to the paper's; `tests/judge_numbers.sh`:
+  JUDGE NUMBERS OK.
+
+Found on the way: inkscape.org again served only the first 19,922,944 bytes of `Inkscape-1.4.4.AppImage` (the run used
+the copy with the paper's sha256). The setup scripts recorded the sha256 of whatever arrived on the first download, so a
+changed or truncated binary was never compared with the paper's. Now `env/apps.sha256` pins the sha256 of every
+application download used in the paper and `setup_darktable.sh` / `setup_apps.sh` fail on any difference (tested with
+the paper's files: pass; with a truncated AppImage: fail with a message).
