@@ -2,7 +2,7 @@
 
 **Benchmarking agents on effect judgement in professional editing.**
 
-[Project page](https://uservan.github.io/GoldiBench) · [Dataset](https://huggingface.co/datasets/VanWang/GoldiBench) ·
+[Paper](https://arxiv.org/abs/2611.31590) · [Project page](https://uservan.github.io/GoldiBench) · [Dataset](https://huggingface.co/datasets/VanWang/GoldiBench) ·
 [All run logs](https://huggingface.co/datasets/VanWang/GoldiBench-logs)
 
 <p align="center"><img src="docs/assets/teaser.png" alt="GoldiBench: agents pick the right tool but miss the amount" width="100%"></p>
@@ -169,10 +169,14 @@ Code: Apache-2.0. Data: CC-BY-4.0; source images keep their own licenses (PSBenc
 ## Citation
 
 ```bibtex
-@misc{yang2026goldibench,
-  title  = {GoldiBench: Right Tools, Wrong Amount -- Benchmarking Agents on Effect Judgement in Professional Editing},
-  author = {Yang, Wang and Li, Xinpeng and Zhang, Yanyan and Song, Chaoda and Wang, Shouren and Ganguly, Debargha and
-            Singh, Vikash and Ma, Chuang and Cai, Xiaoran and Ye, Kai and Han, Xiaotian and Chaudhary, Vipin},
-  year   = {2026}
+@article{yang2026goldibench,
+  title   = {GoldiBench: Right Tools, Wrong Amount -- Benchmarking Agents on
+             Effect Judgement in Professional Editing},
+  author  = {Yang, Wang and Li, Xinpeng and Zhang, Yanyan and Song, Chaoda and
+             Wang, Shouren and Ganguly, Debargha and Singh, Vikash and Ma, Chuang and
+             Cai, Xiaoran and Ye, Kai and Han, Xiaotian and Chaudhary, Vipin},
+  journal = {arXiv preprint arXiv:2611.31590},
+  year    = {2026},
+  url     = {https://arxiv.org/abs/2611.31590}
 }
 ```
